@@ -38,7 +38,7 @@ library(e1071)
 
 #Cookbook
 
-```{r}
+```{r include = False}
 
 # Load the beers data from the beers.csv file.
 beers = read.csv("C:/Users/Rayon/OneDrive/Documents/Doing DataScience/Doing Data Science/MSDS_6306_Doing-Data-Science/Unit 8 and 9 Case Study 1/Beers.csv")
