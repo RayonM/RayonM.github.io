@@ -1,0 +1,18 @@
+---
+title: "About"
+author: "Rayon M"
+date: "7/9/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Name: Rajive Starks
+## Place of Origin: Ghana
+## Interest: Basketball, Soccer, Data Science, R, R-Studio
+## Work: AppleSoft
+## School: University
+
+“The other tabs represent work / analyses that I have completed.  Please check them out!”

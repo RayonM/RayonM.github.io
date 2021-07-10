@@ -1,0 +1,10 @@
+name: "my-website"
+navbar: 
+  title: "Rayon's Portfolio"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "About"
+      href: About.html
+    - text: "Case Study 1"
+      href: MSDS_Case_Study.html
