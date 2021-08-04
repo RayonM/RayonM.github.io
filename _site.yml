@@ -6,7 +6,7 @@ navbar:
       href: index.html
     - text: "About"
       href: About.html
-    - text: "Case Study 1"
+    - text: "Case Study 1" 
       href: MSDS_Case_Study.html
-    - text: "Case Study 2"
+    - text: "Case Study 2" 
       href: Frito-Lay-Attrition-Analysis.html
