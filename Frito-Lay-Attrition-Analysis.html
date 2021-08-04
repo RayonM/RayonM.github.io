@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Rayon M" />
+
+
+<title>Frito Lay Analysis</title>
+
+<script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
+<script src="site_libs/jquery-3.5.1/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.3/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.9.3/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.1.1/css/crosstalk.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.1.1/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-1.57.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-1.57.1/plotly-latest.min.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Rayon's Portfolio</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="About.html">About</a>
+</li>
+<li>
+  <a href="MSDS_Case_Study.html">Case Study 1</a>
+</li>
+<li class="dropdown-header">Case Study 2</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Frito Lay Analysis</h1>
+<h4 class="author">Rayon M</h4>
+<h4 class="date">7/30/2021</h4>
+
+</div>
+
+
+<div id="project-objectives" class="section level2">
+<h2><strong>Project Objectives</strong></h2>
+<ol style="list-style-type: decimal">
+<li>Classify Attrition</li>
+<li>Identify Trends within the Departments and Job Roles</li>
+<li>Predict Monthly Income</li>
+</ol>
+</div>
+<div id="methodology" class="section level2">
+<h2><strong>Methodology</strong></h2>
+<p>This Analysis was conducted using the following methodology:</p>
+<ol style="list-style-type: decimal">
+<li>Loaded the data set provided (CaseStudy2-data.csv)</li>
+<li>Performed Exploratory Data Analysis to identify key factors that leads to Attrition, and find explanatory variables for the Linear Regression Model.</li>
+<li>Used the Naive Bayes to achieve Classification</li>
+<li>Used Linear Regression to Predict the Monthly Income</li>
+</ol>
+<p>Categorical Data:</p>
+<ul>
+<li>Attrition</li>
+<li>BusinessTravel</li>
+<li>Department</li>
+<li>EducationField</li>
+<li>Gender</li>
+<li>JobRole</li>
+<li>MaritalStatus</li>
+<li>Over18</li>
+<li>OverTime</li>
+</ul>
+<p>Continuous Variables:</p>
+<ul>
+<li>Age</li>
+<li>DailyRate</li>
+<li>DistanceFromHome</li>
+<li>Education</li>
+<li>EmployeeCount</li>
+<li>EmployeeNumber</li>
+<li>EnvironmentSatisfaction</li>
+<li>HourlyRate</li>
+<li>JobInvolvement</li>
+<li>JobLevel</li>
+<li>JobSatisfaction</li>
+<li>MonthlyIncome</li>
+<li>MonthlyRate</li>
+<li>NumCompaniesWorked</li>
+<li>PercentSalaryHike</li>
+<li>PerformanceRating</li>
+<li>RelationshipSatisfaction</li>
+<li>StandardHours</li>
+<li>StockOptionLevel</li>
+<li>TotalWorkingYears</li>
+<li>TrainingTimesLastYear</li>
+<li>WorkLifeBalance</li>
+<li>YearsAtCompany</li>
+<li>YearsInCurrentRole</li>
+<li>YearsSinceLastPromotion</li>
+<li>YearsWithCurrManager</li>
+</ul>
+<div id="import-data" class="section level3">
+<h3><em>Import Data</em></h3>
+</div>
+</div>
+<div id="exploratory-data-analysis-eda" class="section level2">
+<h2><strong>Exploratory Data Analysis (EDA)</strong></h2>
+<div id="explore-factors-that-can-lead-voluntary-employee-turnover-attrition.-identify-the-top-three-factors-that-contribute-to-turnover." class="section level3">
+<h3>Explore factors that can lead voluntary employee turnover (Attrition). Identify the top three factors that contribute to turnover.</h3>
+</div>
+<div id="the-business-is-also-interested-in-learning-about-any-job-role-specific-trends-that-may-exist-in-the-data-set.-you-can-also-provide-any-other-interesting-trends-and-observations-from-your-analysis." class="section level3">
+<h3>The business is also interested in learning about any job role specific trends that may exist in the data set. You can also provide any other interesting trends and observations from your analysis.</h3>
+<pre class="r"><code># Look at the structure of the data
+str(employee_data) # 870 observations and 36 variables</code></pre>
+<pre><code>## &#39;data.frame&#39;:    870 obs. of  36 variables:
+##  $ ID                      : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Age                     : int  32 40 35 32 24 27 41 37 34 34 ...
+##  $ Attrition               : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ BusinessTravel          : chr  &quot;Travel_Rarely&quot; &quot;Travel_Rarely&quot; &quot;Travel_Frequently&quot; &quot;Travel_Rarely&quot; ...
+##  $ DailyRate               : int  117 1308 200 801 567 294 1283 309 1333 653 ...
+##  $ Department              : chr  &quot;Sales&quot; &quot;Research &amp; Development&quot; &quot;Research &amp; Development&quot; &quot;Sales&quot; ...
+##  $ DistanceFromHome        : int  13 14 18 1 2 10 5 10 10 10 ...
+##  $ Education               : int  4 3 2 4 1 2 5 4 4 4 ...
+##  $ EducationField          : chr  &quot;Life Sciences&quot; &quot;Medical&quot; &quot;Life Sciences&quot; &quot;Marketing&quot; ...
+##  $ EmployeeCount           : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ EmployeeNumber          : int  859 1128 1412 2016 1646 733 1448 1105 1055 1597 ...
+##  $ EnvironmentSatisfaction : int  2 3 3 3 1 4 2 4 3 4 ...
+##  $ Gender                  : chr  &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; &quot;Female&quot; ...
+##  $ HourlyRate              : int  73 44 60 48 32 32 90 88 87 92 ...
+##  $ JobInvolvement          : int  3 2 3 3 3 3 4 2 3 2 ...
+##  $ JobLevel                : int  2 5 3 3 1 3 1 2 1 2 ...
+##  $ JobRole                 : chr  &quot;Sales Executive&quot; &quot;Research Director&quot; &quot;Manufacturing Director&quot; &quot;Sales Executive&quot; ...
+##  $ JobSatisfaction         : int  4 3 4 4 4 1 3 4 3 3 ...
+##  $ MaritalStatus           : chr  &quot;Divorced&quot; &quot;Single&quot; &quot;Single&quot; &quot;Married&quot; ...
+##  $ MonthlyIncome           : int  4403 19626 9362 10422 3760 8793 2127 6694 2220 5063 ...
+##  $ MonthlyRate             : int  9250 17544 19944 24032 17218 4809 5561 24223 18410 15332 ...
+##  $ NumCompaniesWorked      : int  2 1 2 1 1 1 2 2 1 1 ...
+##  $ Over18                  : chr  &quot;Y&quot; &quot;Y&quot; &quot;Y&quot; &quot;Y&quot; ...
+##  $ OverTime                : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ PercentSalaryHike       : int  11 14 11 19 13 21 12 14 19 14 ...
+##  $ PerformanceRating       : int  3 3 3 3 3 4 3 3 3 3 ...
+##  $ RelationshipSatisfaction: int  3 1 3 3 3 3 1 3 4 2 ...
+##  $ StandardHours           : int  80 80 80 80 80 80 80 80 80 80 ...
+##  $ StockOptionLevel        : int  1 0 0 2 0 2 0 3 1 1 ...
+##  $ TotalWorkingYears       : int  8 21 10 14 6 9 7 8 1 8 ...
+##  $ TrainingTimesLastYear   : int  3 2 2 3 2 4 5 5 2 3 ...
+##  $ WorkLifeBalance         : int  2 4 3 3 3 2 2 3 3 2 ...
+##  $ YearsAtCompany          : int  5 20 2 14 6 9 4 1 1 8 ...
+##  $ YearsInCurrentRole      : int  2 7 2 10 3 7 2 0 1 2 ...
+##  $ YearsSinceLastPromotion : int  0 4 2 5 1 1 0 0 0 7 ...
+##  $ YearsWithCurrManager    : int  3 9 2 7 3 7 3 0 0 7 ...</code></pre>
+<pre class="r"><code># display top 6 observations in the data
+head(employee_data)</code></pre>
+<pre><code>##   ID Age Attrition    BusinessTravel DailyRate             Department
+## 1  1  32        No     Travel_Rarely       117                  Sales
+## 2  2  40        No     Travel_Rarely      1308 Research &amp; Development
+## 3  3  35        No Travel_Frequently       200 Research &amp; Development
+## 4  4  32        No     Travel_Rarely       801                  Sales
+## 5  5  24        No Travel_Frequently       567 Research &amp; Development
+## 6  6  27        No Travel_Frequently       294 Research &amp; Development
+##   DistanceFromHome Education   EducationField EmployeeCount EmployeeNumber
+## 1               13         4    Life Sciences             1            859
+## 2               14         3          Medical             1           1128
+## 3               18         2    Life Sciences             1           1412
+## 4                1         4        Marketing             1           2016
+## 5                2         1 Technical Degree             1           1646
+## 6               10         2    Life Sciences             1            733
+##   EnvironmentSatisfaction Gender HourlyRate JobInvolvement JobLevel
+## 1                       2   Male         73              3        2
+## 2                       3   Male         44              2        5
+## 3                       3   Male         60              3        3
+## 4                       3 Female         48              3        3
+## 5                       1 Female         32              3        1
+## 6                       4   Male         32              3        3
+##                  JobRole JobSatisfaction MaritalStatus MonthlyIncome
+## 1        Sales Executive               4      Divorced          4403
+## 2      Research Director               3        Single         19626
+## 3 Manufacturing Director               4        Single          9362
+## 4        Sales Executive               4       Married         10422
+## 5     Research Scientist               4        Single          3760
+## 6 Manufacturing Director               1      Divorced          8793
+##   MonthlyRate NumCompaniesWorked Over18 OverTime PercentSalaryHike
+## 1        9250                  2      Y       No                11
+## 2       17544                  1      Y       No                14
+## 3       19944                  2      Y       No                11
+## 4       24032                  1      Y       No                19
+## 5       17218                  1      Y      Yes                13
+## 6        4809                  1      Y       No                21
+##   PerformanceRating RelationshipSatisfaction StandardHours StockOptionLevel
+## 1                 3                        3            80                1
+## 2                 3                        1            80                0
+## 3                 3                        3            80                0
+## 4                 3                        3            80                2
+## 5                 3                        3            80                0
+## 6                 4                        3            80                2
+##   TotalWorkingYears TrainingTimesLastYear WorkLifeBalance YearsAtCompany
+## 1                 8                     3               2              5
+## 2                21                     2               4             20
+## 3                10                     2               3              2
+## 4                14                     3               3             14
+## 5                 6                     2               3              6
+## 6                 9                     4               2              9
+##   YearsInCurrentRole YearsSinceLastPromotion YearsWithCurrManager
+## 1                  2                       0                    3
+## 2                  7                       4                    9
+## 3                  2                       2                    2
+## 4                 10                       5                    7
+## 5                  3                       1                    3
+## 6                  7                       1                    7</code></pre>
+<pre class="r"><code># view the variables in the dataset to determine if there are any &quot;NAs&quot; or missing values.
+gg_miss_var(employee_data)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code># The dataset did not have any missing  or NA values. </code></pre>
+</div>
+</div>
+<div id="what-trends-exist-within-the-data-what-is-the-split-between-attrition-yes-and-no" class="section level1">
+<h1>What trends exist within the data? What is the split between Attrition Yes and No?</h1>
+<pre class="r"><code>attrition_split &lt;- data.frame(employee_data %&gt;% group_by(Attrition) %&gt;% summarise(Count = n()))
+attrition_split</code></pre>
+<pre><code>##   Attrition Count
+## 1        No   730
+## 2       Yes   140</code></pre>
+<pre class="r"><code># The  &quot;Attrition&quot; variable contains 730 No and 140 Yes observations in the dataset.
+
+# Calculate the percentage difference of the No vs. Yes observations.
+# Use setDT from the data.table package to calculate the %.
+
+attrition_percent &lt;- setDT (employee_data)[, 100 * .N/ nrow(employee_data), by = Attrition]
+
+attrition_percent$V1 = round(attrition_percent$V1)
+
+ggplot(data = attrition_percent, mapping = aes(x = Attrition, y = V1, fill = Attrition))+
+  geom_bar(stat = &quot;identity&quot;) +
+  geom_text(aes(Attrition, V1-10, label = V1), data = attrition_percent)+
+  xlab(&quot;Attriton&quot;)+
+  ylab(&quot;Percentages&quot;)+
+  ggtitle(&quot;Attrition Distribution by percent&quot;)+
+  theme_tufte()+
+  theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<pre class="r"><code># Another option for displaying percentages
+BarChart(Attrition, fill = (count) , data = employee_data)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+<pre><code>## &gt;&gt;&gt; Suggestions
+## BarChart(Attrition, horiz=TRUE)  # horizontal bar chart
+## BarChart(Attrition, fill=&quot;greens&quot;)  # sequential green bars
+## PieChart(Attrition)  # doughnut (ring) chart
+## Plot(Attrition)  # bubble plot
+## Plot(Attrition, stat=&quot;count&quot;)  # lollipop plot 
+## 
+## 
+## --- Attrition ---
+## 
+## 
+## Missing Values of Attrition: 0 
+## 
+## 
+##                   No    Yes     Total 
+## Frequencies:     730    140       870 
+## Proportions:   0.839  0.161     1.000 
+## 
+## 
+## Chi-squared test of null hypothesis of equal probabilities 
+##   Chisq = 400.115, df = 1, p-value = 0.000</code></pre>
+<pre class="r"><code># Summary:
+# The data consists of 84% No&#39;s and 16% Yes&#39;s as it pertains to Attrition.</code></pre>
+</div>
+<div id="find-where-attrition-is-highest-among-the-categorical-variables" class="section level1">
+<h1>Find where Attrition is highest among the Categorical Variables</h1>
+<pre class="r"><code># Attrition vs. Overtime
+
+overtime_percent &lt;- setDT (employee_data)[, 100 * .N/ nrow(employee_data), by = OverTime]
+
+overtime_percent$V1  &lt;-  round(overtime_percent$V1)
+colnames(overtime_percent)[2] = &quot;Percent&quot;
+overtime_percent &lt;-  data.frame(overtime_percent)
+overtime_percent$OverTime &lt;- as.factor(overtime_percent$OverTime)
+
+overtime_percent</code></pre>
+<pre><code>##   OverTime Percent
+## 1       No      71
+## 2      Yes      29</code></pre>
+<pre class="r"><code># 29% of all employees work Overtime
+# 71% of all employees does not work Overtime
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = OverTime, colour = Attrition))+
+  theme_economist()+
+   theme(legend.position = &quot;none&quot;)+
+  ggtitle(&quot;Attrition vs. OverTime&quot;))</code></pre>
+<div id="htmlwidget-7447cdf6f87b946c4a96" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7447cdf6f87b946c4a96">{"x":{"data":[{"x":[1,1],"y":[1,2],"text":["n: 558<br />Attrition: 1<br />OverTime: 1<br />Attrition: No","n: 172<br />Attrition: 1<br />OverTime: 2<br />Attrition: No"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":[22.6771653543307,12.7414640245141],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2],"y":[1,2],"text":["n:  60<br />Attrition: 2<br />OverTime: 1<br />Attrition: Yes","n:  80<br />Attrition: 2<br />OverTime: 2<br />Attrition: Yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":[3.77952755905512,7.56663692624977],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":43.1714404317144},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. OverTime <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"OverTime","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a907aad4956":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"3a907aad4956","visdat":{"3a907aad4956":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># 57% of persons who left the company were working overtime! This will be one of the factors that leads to Attrition
+# Attrition was highest in the group of employees that worked overtime
+
+# ggplot(data = employee_data, mapping = aes(y = OverTime))+
+#   geom_bar()+
+#   geom_text(aes(OverTime, label = Percent, Percent = Percent + 1000000), data = overtime_percent)+
+#   coord_flip()+
+#   scale_y_discrete(expand = c(0, 0))+
+#   scale_x_discrete(expand = c(0, 0))
+
+BarChart(OverTime, by = Attrition , data = employee_data)</code></pre>
+<pre><code>## &gt;&gt;&gt; Suggestions
+## Plot(OverTime, Attrition)  # bubble plot
+## BarChart(OverTime, by=Attrition, horiz=TRUE)  # horizontal bar chart
+## BarChart(OverTime, fill=&quot;steelblue&quot;)  # steelblue bars 
+## 
+## 
+## Joint and Marginal Frequencies 
+## ------------------------------ 
+##  
+##       OverTime 
+## Attrition    No Yes Sum 
+##   No        558 172 730 
+##   Yes        60  80 140 
+##   Sum       618 252 870 
+## 
+## 
+## Cramer&#39;s V (phi): 0.272 
+##  
+## Chi-square Test:  Chisq = 64.383, df = 1, p-value = 0.000</code></pre>
+<pre class="r"><code>overtime_attrition &lt;- BarChart(OverTime, by = Attrition , data = employee_data)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-5-2.png" width="672" /></p>
+<pre><code>## &gt;&gt;&gt; Suggestions
+## Plot(OverTime, Attrition)  # bubble plot
+## BarChart(OverTime, by=Attrition, horiz=TRUE)  # horizontal bar chart
+## BarChart(OverTime, fill=&quot;steelblue&quot;)  # steelblue bars 
+## 
+## 
+## Joint and Marginal Frequencies 
+## ------------------------------ 
+##  
+##       OverTime 
+## Attrition    No Yes Sum 
+##   No        558 172 730 
+##   Yes        60  80 140 
+##   Sum       618 252 870 
+## 
+## 
+## Cramer&#39;s V (phi): 0.272 
+##  
+## Chi-square Test:  Chisq = 64.383, df = 1, p-value = 0.000</code></pre>
+<pre class="r"><code># overtime_attrition$freq %&gt;% kable(escape = F, align = c(&quot;c&quot;,&quot;l&quot;,&quot;l&quot;)) %&gt;%
+#   kable_styling(full_width =full_width)
+
+# Heat map showing that a large number of the employees don&#39;t work overtime.
+
+pal &lt;- wes_palette(&quot;Zissou1&quot;, 100, type = &quot;continuous&quot;)
+ggplotly(employee_data %&gt;% 
+  count(Attrition, OverTime)%&gt;%
+  ggplot(mapping = aes(x = Attrition,  y = OverTime)) +
+  geom_tile(mapping = aes(fill = n))+
+  scale_fill_gradientn(colours = pal) + 
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  coord_equal()+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. OverTime&quot;))</code></pre>
+<div id="htmlwidget-ee1deba47f8417f7f20e" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-ee1deba47f8417f7f20e">{"x":{"data":[{"x":[1,2],"y":[1,2],"z":[[1,0],[0.224899598393574,0.0401606425702811]],"text":[["n: 558<br />Attrition: No<br />OverTime: No","n:  60<br />Attrition: Yes<br />OverTime: No"],["n: 172<br />Attrition: No<br />OverTime: Yes","n:  80<br />Attrition: Yes<br />OverTime: Yes"]],"colorscale":[[0,"#3B9AB2"],[0.0401606425702811,"#449EB5"],[0.224899598393574,"#72B3C2"],[1,"#F21A00"]],"type":"heatmap","showscale":false,"autocolorscale":false,"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[1],"name":"99_43937e492f21704211e60f2fd57af048","type":"scatter","mode":"markers","opacity":0,"hoverinfo":"skip","showlegend":false,"marker":{"color":[0,1],"colorscale":[[0,"#3B9AB2"],[0.00334448160535117,"#3C9AB2"],[0.00668896321070234,"#3C9BB2"],[0.0100334448160535,"#3D9BB2"],[0.0133779264214047,"#3E9BB2"],[0.0167224080267558,"#3E9CB3"],[0.020066889632107,"#3F9CB3"],[0.0234113712374582,"#409CB3"],[0.0267558528428094,"#419DB4"],[0.0301003344481605,"#429DB4"],[0.0334448160535117,"#439DB4"],[0.0367892976588629,"#439EB5"],[0.040133779264214,"#449EB5"],[0.0434782608695652,"#459EB5"],[0.0468227424749164,"#469FB5"],[0.0501672240802676,"#479FB5"],[0.0535117056856187,"#48A0B5"],[0.0568561872909699,"#48A0B6"],[0.0602006688963211,"#49A1B6"],[0.0635451505016722,"#4AA1B6"],[0.0668896321070234,"#4BA2B7"],[0.0702341137123746,"#4CA2B7"],[0.0735785953177257,"#4DA2B7"],[0.0769230769230769,"#4DA3B8"],[0.0802675585284281,"#4EA3B8"],[0.0836120401337793,"#4FA3B8"],[0.0869565217391304,"#50A4B8"],[0.0903010033444816,"#51A4B8"],[0.0936454849498328,"#52A4B8"],[0.096989966555184,"#52A5B9"],[0.100334448160535,"#53A5B9"],[0.103678929765886,"#54A5B9"],[0.107023411371237,"#55A6BA"],[0.110367892976589,"#56A6BA"],[0.11371237458194,"#57A7BA"],[0.117056856187291,"#57A7BB"],[0.120401337792642,"#58A8BB"],[0.123745819397993,"#59A8BB"],[0.127090301003344,"#5AA9BB"],[0.130434782608696,"#5BA9BB"],[0.133779264214047,"#5BA9BB"],[0.137123745819398,"#5CAABC"],[0.140468227424749,"#5DAABC"],[0.1438127090301,"#5DAABC"],[0.147157190635451,"#5EABBD"],[0.150501672240803,"#5FABBD"],[0.153846153846154,"#60ABBD"],[0.157190635451505,"#61ACBE"],[0.160535117056856,"#62ACBE"],[0.163879598662207,"#62ACBE"],[0.167224080267559,"#63ADBF"],[0.17056856187291,"#64ADBF"],[0.173913043478261,"#65ADBF"],[0.177257525083612,"#66AEBF"],[0.180602006688963,"#67AFBF"],[0.183946488294314,"#67AFBF"],[0.187290969899666,"#68B0C0"],[0.190635451505017,"#69B0C0"],[0.193979933110368,"#6AB0C0"],[0.197324414715719,"#6BB1C1"],[0.20066889632107,"#6CB1C1"],[0.204013377926421,"#6CB1C1"],[0.207357859531773,"#6DB2C2"],[0.210702341137124,"#6EB2C2"],[0.214046822742475,"#6FB2C2"],[0.217391304347826,"#70B3C2"],[0.220735785953177,"#71B3C2"],[0.224080267558528,"#71B3C2"],[0.22742474916388,"#72B4C3"],[0.230769230769231,"#73B4C3"],[0.234113712374582,"#74B4C3"],[0.237458193979933,"#75B5C4"],[0.240802675585284,"#76B6C4"],[0.244147157190635,"#77B6C4"],[0.247491638795987,"#78B7C3"],[0.250836120401338,"#79B7C3"],[0.254180602006689,"#7AB7C2"],[0.25752508361204,"#7BB7C0"],[0.260869565217391,"#7CB8BE"],[0.264214046822742,"#7EB8BC"],[0.267558528428094,"#80B8BA"],[0.270903010033445,"#81B8B7"],[0.274247491638796,"#83B8B5"],[0.277591973244147,"#84B8B3"],[0.280936454849498,"#86B9B1"],[0.284280936454849,"#88B9AF"],[0.287625418060201,"#89B9AD"],[0.290969899665552,"#8ABAAB"],[0.294314381270903,"#8CBAA9"],[0.297658862876254,"#8DBAA7"],[0.301003344481605,"#8FBBA5"],[0.304347826086957,"#91BBA3"],[0.307692307692308,"#92BBA1"],[0.311036789297659,"#94BC9E"],[0.31438127090301,"#96BC9C"],[0.317725752508361,"#97BC9A"],[0.321070234113712,"#98BD98"],[0.324414715719064,"#9ABD96"],[0.327759197324415,"#9BBD94"],[0.331103678929766,"#9DBE92"],[0.334448160535117,"#9EBE90"],[0.337792642140468,"#A0BE8E"],[0.341137123745819,"#A1BE8C"],[0.344481605351171,"#A3BE8A"],[0.347826086956522,"#A4BE88"],[0.351170568561873,"#A6BF86"],[0.354515050167224,"#A7BF83"],[0.357859531772575,"#A9BF81"],[0.361204013377926,"#ABC07F"],[0.364548494983278,"#ACC07D"],[0.367892976588629,"#AEC07B"],[0.37123745819398,"#AFC179"],[0.374581939799331,"#B0C178"],[0.377926421404682,"#B2C176"],[0.381270903010033,"#B4C274"],[0.384615384615385,"#B5C271"],[0.387959866220736,"#B7C26F"],[0.391304347826087,"#B9C36D"],[0.394648829431438,"#BAC36B"],[0.397993311036789,"#BCC369"],[0.401337792642141,"#BDC367"],[0.404682274247492,"#BEC365"],[0.408026755852843,"#C0C363"],[0.411371237458194,"#C2C461"],[0.414715719063545,"#C3C45F"],[0.418060200668896,"#C5C45C"],[0.421404682274247,"#C7C55A"],[0.424749163879599,"#C8C558"],[0.42809364548495,"#CAC556"],[0.431438127090301,"#CBC654"],[0.434782608695652,"#CCC652"],[0.438127090301003,"#CEC650"],[0.441471571906355,"#D0C74E"],[0.444816053511706,"#D1C74C"],[0.448160535117057,"#D3C74A"],[0.451505016722408,"#D5C848"],[0.454849498327759,"#D6C846"],[0.45819397993311,"#D7C844"],[0.461538461538461,"#D9C941"],[0.464882943143813,"#DAC93F"],[0.468227424749164,"#DCC93D"],[0.471571906354515,"#DDC93B"],[0.474916387959866,"#DFC939"],[0.478260869565217,"#E1C937"],[0.481605351170569,"#E2CA35"],[0.48494983277592,"#E4CA33"],[0.488294314381271,"#E5CA31"],[0.491638795986622,"#E7CB2F"],[0.494983277591973,"#E8CB2D"],[0.498327759197324,"#E9CB2C"],[0.501672240802676,"#E9CB2A"],[0.505016722408027,"#EACB29"],[0.508361204013378,"#EACB28"],[0.511705685618729,"#EACA28"],[0.51505016722408,"#EACA27"],[0.518394648829431,"#EACA26"],[0.521739130434783,"#E9C926"],[0.525083612040134,"#E9C925"],[0.528428093645485,"#E9C825"],[0.531772575250836,"#E9C824"],[0.535117056856187,"#E9C724"],[0.538461538461538,"#E9C723"],[0.54180602006689,"#E9C623"],[0.545150501672241,"#E9C622"],[0.548494983277592,"#E9C621"],[0.551839464882943,"#E8C521"],[0.555183946488294,"#E8C520"],[0.558528428093645,"#E8C51F"],[0.561872909698997,"#E8C41F"],[0.565217391304348,"#E8C41E"],[0.568561872909699,"#E8C41E"],[0.57190635451505,"#E7C31D"],[0.575250836120401,"#E7C31D"],[0.578595317725753,"#E7C31C"],[0.581939799331104,"#E7C21C"],[0.585284280936455,"#E7C21B"],[0.588628762541806,"#E7C11A"],[0.591973244147157,"#E7C11A"],[0.595317725752508,"#E7C019"],[0.59866220735786,"#E7C019"],[0.602006688963211,"#E6BF18"],[0.605351170568562,"#E6BF18"],[0.608695652173913,"#E6BF17"],[0.612040133779264,"#E6BE17"],[0.615384615384615,"#E6BE16"],[0.618729096989967,"#E6BE16"],[0.622073578595318,"#E5BD15"],[0.625418060200669,"#E5BD14"],[0.62876254180602,"#E5BD14"],[0.632107023411371,"#E5BC13"],[0.635451505016722,"#E5BC13"],[0.638795986622074,"#E5BC13"],[0.642140468227425,"#E5BB12"],[0.645484949832776,"#E5BB11"],[0.648829431438127,"#E5BB11"],[0.652173913043478,"#E4BA10"],[0.655518394648829,"#E4B90F"],[0.658862876254181,"#E4B90F"],[0.662207357859532,"#E4B80E"],[0.665551839464883,"#E4B80D"],[0.668896321070234,"#E4B80D"],[0.672240802675585,"#E3B70C"],[0.675585284280936,"#E3B70C"],[0.678929765886288,"#E3B70C"],[0.682274247491639,"#E3B60B"],[0.68561872909699,"#E3B60A"],[0.688963210702341,"#E3B60A"],[0.692307692307692,"#E3B509"],[0.695652173913043,"#E3B508"],[0.698996655518395,"#E3B508"],[0.702341137123746,"#E2B407"],[0.705685618729097,"#E2B307"],[0.709030100334448,"#E2B307"],[0.712374581939799,"#E2B206"],[0.715719063545151,"#E2B205"],[0.719063545150502,"#E2B205"],[0.722408026755853,"#E1B104"],[0.725752508361204,"#E1B103"],[0.729096989966555,"#E1B103"],[0.732441471571906,"#E1B002"],[0.735785953177258,"#E1B002"],[0.739130434782609,"#E1B002"],[0.74247491638796,"#E1AF01"],[0.745819397993311,"#E1AF00"],[0.749163879598662,"#E1AE00"],[0.752508361204013,"#E1AD00"],[0.755852842809365,"#E1AB00"],[0.759197324414716,"#E1A900"],[0.762541806020067,"#E2A700"],[0.765886287625418,"#E2A500"],[0.769230769230769,"#E2A300"],[0.77257525083612,"#E2A100"],[0.775919732441472,"#E29F00"],[0.779264214046823,"#E29D00"],[0.782608695652174,"#E29B00"],[0.785953177257525,"#E39900"],[0.789297658862876,"#E39700"],[0.792642140468227,"#E39500"],[0.795986622073579,"#E49300"],[0.79933110367893,"#E49100"],[0.802675585284281,"#E48F00"],[0.806020066889632,"#E48D00"],[0.809364548494983,"#E48B00"],[0.812709030100334,"#E48900"],[0.816053511705686,"#E58700"],[0.819397993311037,"#E58500"],[0.822742474916388,"#E58300"],[0.826086956521739,"#E68100"],[0.82943143812709,"#E67F00"],[0.832775919732441,"#E67D00"],[0.836120401337793,"#E77B00"],[0.839464882943144,"#E77900"],[0.842809364548495,"#E77700"],[0.846153846153846,"#E77500"],[0.849498327759197,"#E77300"],[0.852842809364548,"#E77100"],[0.8561872909699,"#E86F00"],[0.859531772575251,"#E86D00"],[0.862876254180602,"#E86B00"],[0.866220735785953,"#E96900"],[0.869565217391304,"#E96700"],[0.872909698996656,"#E96600"],[0.876254180602007,"#E96400"],[0.879598662207358,"#E96200"],[0.882943143812709,"#E96000"],[0.88628762541806,"#EA5E00"],[0.889632107023411,"#EA5C00"],[0.892976588628763,"#EA5A00"],[0.896321070234114,"#EB5800"],[0.899665551839465,"#EB5600"],[0.903010033444816,"#EB5400"],[0.906354515050167,"#EB5200"],[0.909698996655518,"#EB5000"],[0.91304347826087,"#EB4E00"],[0.916387959866221,"#EC4C00"],[0.919732441471572,"#EC4A00"],[0.923076923076923,"#EC4800"],[0.926421404682274,"#ED4600"],[0.929765886287625,"#ED4400"],[0.933110367892977,"#ED4200"],[0.936454849498328,"#ED4000"],[0.939799331103679,"#ED3E00"],[0.94314381270903,"#ED3C00"],[0.946488294314381,"#EE3A00"],[0.949832775919732,"#EE3800"],[0.953177257525084,"#EE3600"],[0.956521739130435,"#EF3400"],[0.959866220735786,"#EF3200"],[0.963210702341137,"#EF3000"],[0.966555183946488,"#EF2E00"],[0.969899665551839,"#EF2C00"],[0.973244147157191,"#EF2A00"],[0.976588628762542,"#F02800"],[0.979933110367893,"#F02600"],[0.983277591973244,"#F02400"],[0.986622073578595,"#F12200"],[0.989966555183946,"#F12000"],[0.993311036789298,"#F11E00"],[0.996655518394649,"#F21C00"],[1,"#F21A00"]],"colorbar":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"thickness":23.04,"title":"n","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickmode":"array","ticktext":["100","200","300","400","500"],"tickvals":[0.0803212851405622,0.281124497991968,0.481927710843373,0.682730923694779,0.883534136546185],"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"ticklen":2,"len":0.5}},"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":43.1714404317144},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. OverTime <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.5,2.5],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"scaleanchor":"y","scaleratio":1,"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.5,2.5],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"OverTime","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"scaleanchor":"x","scaleratio":1,"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a906ff26a2b":{"fill":{},"x":{},"y":{},"type":"heatmap"}},"cur_data":"3a906ff26a2b","visdat":{"3a906ff26a2b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>mosaicplot(Attrition~OverTime, data = employee_data, col=c(&quot;darkslategray4&quot;, &quot;orange&quot;), main =&quot;Attrition vs Overtime&quot;, xlab = &quot;Attrition&quot;, ylab = &quot;Overtime&quot;, border = &quot;black&quot;, las=0.5, shade=TRUE)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-5-4.png" width="672" /></p>
+<pre class="r"><code>ggplotly(ggplot(data = employee_data, mapping = aes(x = OverTime,  fill = Attrition))+
+  geom_bar(position = &quot;dodge&quot;))</code></pre>
+<div id="htmlwidget-a7b5ab47020cf5abde41" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a7b5ab47020cf5abde41">{"x":{"data":[{"orientation":"v","width":[0.45,0.45],"base":[0,0],"x":[0.775,1.775],"y":[558,172],"text":["count: 558<br />OverTime: No<br />Attrition: No","count: 172<br />OverTime: Yes<br />Attrition: No"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.45,0.45],"base":[0,0],"x":[1.225,2.225],"y":[60,80],"text":["count:  60<br />OverTime: No<br />Attrition: Yes","count:  80<br />OverTime: Yes<br />Attrition: Yes"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.2283105022831,"r":7.30593607305936,"b":40.1826484018265,"l":43.1050228310502},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"OverTime","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-27.9,585.9],"tickmode":"array","ticktext":["0","200","400"],"tickvals":[0,200,400],"categoryorder":"array","categoryarray":["0","200","400"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.96751968503937},"annotations":[{"text":"Attrition","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a905e2a12f5":{"x":{},"fill":{},"type":"bar"}},"cur_data":"3a905e2a12f5","visdat":{"3a905e2a12f5":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># Attrition vs BusinessTravel
+attrition_businesstravel &lt;- ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = BusinessTravel, colour = Attrition))+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. Business Travel&quot;)
+  ggplotly(attrition_businesstravel)</code></pre>
+<div id="htmlwidget-5c575777bb600eb475aa" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5c575777bb600eb475aa">{"x":{"data":[{"x":[1,1,1],"y":[1,2,3],"text":["n:  83<br />Attrition: 1<br />BusinessTravel: 1<br />Attrition: No","n: 123<br />Attrition: 1<br />BusinessTravel: 2<br />Attrition: No","n: 524<br />Attrition: 1<br />BusinessTravel: 3<br />Attrition: No"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":[10.8592313316412,12.6094695313444,22.6771653543307],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2,2],"y":[1,2,3],"text":["n:  11<br />Attrition: 2<br />BusinessTravel: 1<br />Attrition: Yes","n:  35<br />Attrition: 2<br />BusinessTravel: 2<br />Attrition: Yes","n:  94<br />Attrition: 2<br />BusinessTravel: 3<br />Attrition: Yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":[3.77952755905512,7.86699643794047,11.3808277558857],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":145.454545454545},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. Business Travel <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,3.6],"tickmode":"array","ticktext":["Non-Travel","Travel_Frequently","Travel_Rarely"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["Non-Travel","Travel_Frequently","Travel_Rarely"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"BusinessTravel","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"y":0.93503937007874},"annotations":[{"text":"n<br />Attrition","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a906fea5ad2":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"3a906fea5ad2","visdat":{"3a906fea5ad2":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>employee_data %&gt;% count(Attrition, BusinessTravel)</code></pre>
+<pre><code>##    Attrition    BusinessTravel   n
+## 1:        No        Non-Travel  83
+## 2:        No Travel_Frequently 123
+## 3:        No     Travel_Rarely 524
+## 4:       Yes        Non-Travel  11
+## 5:       Yes Travel_Frequently  35
+## 6:       Yes     Travel_Rarely  94</code></pre>
+<pre class="r"><code># 15% of employees that traveled Rarely left the company
+# 12% of employees that were Non-Travel left the company
+# 22% of employees that were Travel_Frequently left the company
+
+attrition_businesstravel2 &lt;-  employee_data %&gt;% 
+  count(Attrition, BusinessTravel)%&gt;%
+  ggplot(mapping = aes(x = Attrition,  y = BusinessTravel)) +
+  geom_tile(mapping = aes(fill = n))
+  ggplotly(attrition_businesstravel2)</code></pre>
+<div id="htmlwidget-6ac80df33f780c93e5eb" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6ac80df33f780c93e5eb">{"x":{"data":[{"x":[1,2],"y":[1,2,3],"z":[[0.140350877192982,0],[0.218323586744639,0.0467836257309941],[1,0.161793372319688]],"text":[["n:  83<br />Attrition: No<br />BusinessTravel: Non-Travel","n:  11<br />Attrition: Yes<br />BusinessTravel: Non-Travel"],["n: 123<br />Attrition: No<br />BusinessTravel: Travel_Frequently","n:  35<br />Attrition: Yes<br />BusinessTravel: Travel_Frequently"],["n: 524<br />Attrition: No<br />BusinessTravel: Travel_Rarely","n:  94<br />Attrition: Yes<br />BusinessTravel: Travel_Rarely"]],"colorscale":[[0,"#132B43"],[0.0467836257309941,"#16304A"],[0.140350877192982,"#1C3C5A"],[0.161793372319688,"#1D3E5D"],[0.218323586744639,"#204567"],[1,"#56B1F7"]],"type":"heatmap","showscale":false,"autocolorscale":false,"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[1],"name":"99_a109dd4ad7f3e8b6b4b55de83c20cfe6","type":"scatter","mode":"markers","opacity":0,"hoverinfo":"skip","showlegend":false,"marker":{"color":[0,1],"colorscale":[[0,"#132B43"],[0.00334448160535117,"#132B44"],[0.00668896321070234,"#132C44"],[0.0100334448160535,"#142C45"],[0.0133779264214047,"#142D45"],[0.0167224080267559,"#142D46"],[0.020066889632107,"#142D46"],[0.0234113712374582,"#142E47"],[0.0267558528428094,"#152E47"],[0.0301003344481605,"#152F48"],[0.0334448160535117,"#152F48"],[0.0367892976588629,"#152F49"],[0.040133779264214,"#153049"],[0.0434782608695652,"#16304A"],[0.0468227424749164,"#16304A"],[0.0501672240802676,"#16314B"],[0.0535117056856187,"#16314B"],[0.0568561872909699,"#16324C"],[0.0602006688963211,"#17324D"],[0.0635451505016722,"#17324D"],[0.0668896321070234,"#17334E"],[0.0702341137123746,"#17334E"],[0.0735785953177257,"#17344F"],[0.0769230769230769,"#18344F"],[0.0802675585284281,"#183450"],[0.0836120401337793,"#183550"],[0.0869565217391304,"#183551"],[0.0903010033444816,"#183651"],[0.0936454849498328,"#193652"],[0.0969899665551839,"#193652"],[0.100334448160535,"#193753"],[0.103678929765886,"#193754"],[0.107023411371237,"#193854"],[0.110367892976589,"#1A3855"],[0.11371237458194,"#1A3955"],[0.117056856187291,"#1A3956"],[0.120401337792642,"#1A3956"],[0.123745819397993,"#1A3A57"],[0.127090301003344,"#1B3A57"],[0.130434782608696,"#1B3B58"],[0.133779264214047,"#1B3B59"],[0.137123745819398,"#1B3B59"],[0.140468227424749,"#1C3C5A"],[0.1438127090301,"#1C3C5A"],[0.147157190635451,"#1C3D5B"],[0.150501672240803,"#1C3D5B"],[0.153846153846154,"#1C3D5C"],[0.157190635451505,"#1D3E5C"],[0.160535117056856,"#1D3E5D"],[0.163879598662207,"#1D3F5D"],[0.167224080267559,"#1D3F5E"],[0.17056856187291,"#1D3F5F"],[0.173913043478261,"#1E405F"],[0.177257525083612,"#1E4060"],[0.180602006688963,"#1E4160"],[0.183946488294314,"#1E4161"],[0.187290969899666,"#1E4261"],[0.190635451505017,"#1F4262"],[0.193979933110368,"#1F4263"],[0.197324414715719,"#1F4363"],[0.20066889632107,"#1F4364"],[0.204013377926421,"#1F4464"],[0.207357859531773,"#204465"],[0.210702341137124,"#204465"],[0.214046822742475,"#204566"],[0.217391304347826,"#204566"],[0.220735785953177,"#214667"],[0.224080267558528,"#214668"],[0.22742474916388,"#214768"],[0.230769230769231,"#214769"],[0.234113712374582,"#214769"],[0.237458193979933,"#22486A"],[0.240802675585284,"#22486A"],[0.244147157190635,"#22496B"],[0.247491638795987,"#22496C"],[0.250836120401338,"#224A6C"],[0.254180602006689,"#234A6D"],[0.25752508361204,"#234A6D"],[0.260869565217391,"#234B6E"],[0.264214046822743,"#234B6E"],[0.267558528428094,"#244C6F"],[0.270903010033445,"#244C70"],[0.274247491638796,"#244C70"],[0.277591973244147,"#244D71"],[0.280936454849498,"#244D71"],[0.284280936454849,"#254E72"],[0.287625418060201,"#254E72"],[0.290969899665552,"#254F73"],[0.294314381270903,"#254F74"],[0.297658862876254,"#254F74"],[0.301003344481605,"#265075"],[0.304347826086956,"#265075"],[0.307692307692308,"#265176"],[0.311036789297659,"#265176"],[0.31438127090301,"#275277"],[0.317725752508361,"#275278"],[0.321070234113712,"#275278"],[0.324414715719064,"#275379"],[0.327759197324415,"#275379"],[0.331103678929766,"#28547A"],[0.334448160535117,"#28547B"],[0.337792642140468,"#28557B"],[0.341137123745819,"#28557C"],[0.344481605351171,"#28567C"],[0.347826086956522,"#29567D"],[0.351170568561873,"#29567D"],[0.354515050167224,"#29577E"],[0.357859531772575,"#29577F"],[0.361204013377926,"#2A587F"],[0.364548494983278,"#2A5880"],[0.367892976588629,"#2A5980"],[0.37123745819398,"#2A5981"],[0.374581939799331,"#2A5982"],[0.377926421404682,"#2B5A82"],[0.381270903010033,"#2B5A83"],[0.384615384615385,"#2B5B83"],[0.387959866220736,"#2B5B84"],[0.391304347826087,"#2C5C85"],[0.394648829431438,"#2C5C85"],[0.397993311036789,"#2C5D86"],[0.40133779264214,"#2C5D86"],[0.404682274247492,"#2C5D87"],[0.408026755852843,"#2D5E87"],[0.411371237458194,"#2D5E88"],[0.414715719063545,"#2D5F89"],[0.418060200668896,"#2D5F89"],[0.421404682274247,"#2E608A"],[0.424749163879599,"#2E608A"],[0.42809364548495,"#2E618B"],[0.431438127090301,"#2E618C"],[0.434782608695652,"#2E618C"],[0.438127090301003,"#2F628D"],[0.441471571906354,"#2F628D"],[0.444816053511706,"#2F638E"],[0.448160535117057,"#2F638F"],[0.451505016722408,"#30648F"],[0.454849498327759,"#306490"],[0.45819397993311,"#306590"],[0.461538461538462,"#306591"],[0.464882943143813,"#306592"],[0.468227424749164,"#316692"],[0.471571906354515,"#316693"],[0.474916387959866,"#316793"],[0.478260869565217,"#316794"],[0.481605351170569,"#326895"],[0.48494983277592,"#326895"],[0.488294314381271,"#326996"],[0.491638795986622,"#326996"],[0.494983277591973,"#326997"],[0.498327759197324,"#336A98"],[0.501672240802676,"#336A98"],[0.505016722408027,"#336B99"],[0.508361204013378,"#336B99"],[0.511705685618729,"#346C9A"],[0.51505016722408,"#346C9B"],[0.518394648829431,"#346D9B"],[0.521739130434783,"#346D9C"],[0.525083612040134,"#346E9D"],[0.528428093645485,"#356E9D"],[0.531772575250836,"#356E9E"],[0.535117056856187,"#356F9E"],[0.538461538461538,"#356F9F"],[0.54180602006689,"#3670A0"],[0.545150501672241,"#3670A0"],[0.548494983277592,"#3671A1"],[0.551839464882943,"#3671A1"],[0.555183946488294,"#3772A2"],[0.558528428093645,"#3772A3"],[0.561872909698997,"#3773A3"],[0.565217391304348,"#3773A4"],[0.568561872909699,"#3773A4"],[0.57190635451505,"#3874A5"],[0.575250836120401,"#3874A6"],[0.578595317725753,"#3875A6"],[0.581939799331104,"#3875A7"],[0.585284280936455,"#3976A8"],[0.588628762541806,"#3976A8"],[0.591973244147157,"#3977A9"],[0.595317725752508,"#3977A9"],[0.59866220735786,"#3978AA"],[0.602006688963211,"#3A78AB"],[0.605351170568562,"#3A79AB"],[0.608695652173913,"#3A79AC"],[0.612040133779264,"#3A79AC"],[0.615384615384615,"#3B7AAD"],[0.618729096989967,"#3B7AAE"],[0.622073578595318,"#3B7BAE"],[0.625418060200669,"#3B7BAF"],[0.62876254180602,"#3C7CB0"],[0.632107023411371,"#3C7CB0"],[0.635451505016722,"#3C7DB1"],[0.638795986622074,"#3C7DB1"],[0.642140468227425,"#3C7EB2"],[0.645484949832776,"#3D7EB3"],[0.648829431438127,"#3D7FB3"],[0.652173913043478,"#3D7FB4"],[0.655518394648829,"#3D7FB5"],[0.65886287625418,"#3E80B5"],[0.662207357859532,"#3E80B6"],[0.665551839464883,"#3E81B6"],[0.668896321070234,"#3E81B7"],[0.672240802675585,"#3F82B8"],[0.675585284280936,"#3F82B8"],[0.678929765886288,"#3F83B9"],[0.682274247491639,"#3F83BA"],[0.68561872909699,"#4084BA"],[0.688963210702341,"#4084BB"],[0.692307692307692,"#4085BB"],[0.695652173913043,"#4085BC"],[0.698996655518395,"#4086BD"],[0.702341137123746,"#4186BD"],[0.705685618729097,"#4186BE"],[0.709030100334448,"#4187BF"],[0.712374581939799,"#4187BF"],[0.715719063545151,"#4288C0"],[0.719063545150502,"#4288C1"],[0.722408026755853,"#4289C1"],[0.725752508361204,"#4289C2"],[0.729096989966555,"#438AC2"],[0.732441471571906,"#438AC3"],[0.735785953177258,"#438BC4"],[0.739130434782609,"#438BC4"],[0.74247491638796,"#438CC5"],[0.745819397993311,"#448CC6"],[0.749163879598662,"#448DC6"],[0.752508361204013,"#448DC7"],[0.755852842809364,"#448EC8"],[0.759197324414716,"#458EC8"],[0.762541806020067,"#458FC9"],[0.765886287625418,"#458FC9"],[0.769230769230769,"#458FCA"],[0.77257525083612,"#4690CB"],[0.775919732441471,"#4690CB"],[0.779264214046823,"#4691CC"],[0.782608695652174,"#4691CD"],[0.785953177257525,"#4792CD"],[0.789297658862876,"#4792CE"],[0.792642140468227,"#4793CF"],[0.795986622073579,"#4793CF"],[0.79933110367893,"#4894D0"],[0.802675585284281,"#4894D0"],[0.806020066889632,"#4895D1"],[0.809364548494983,"#4895D2"],[0.812709030100334,"#4896D2"],[0.816053511705686,"#4996D3"],[0.819397993311037,"#4997D4"],[0.822742474916388,"#4997D4"],[0.826086956521739,"#4998D5"],[0.82943143812709,"#4A98D6"],[0.832775919732441,"#4A99D6"],[0.836120401337793,"#4A99D7"],[0.839464882943144,"#4A9AD8"],[0.842809364548495,"#4B9AD8"],[0.846153846153846,"#4B9BD9"],[0.849498327759197,"#4B9BDA"],[0.852842809364548,"#4B9BDA"],[0.8561872909699,"#4C9CDB"],[0.859531772575251,"#4C9CDB"],[0.862876254180602,"#4C9DDC"],[0.866220735785953,"#4C9DDD"],[0.869565217391304,"#4D9EDD"],[0.872909698996655,"#4D9EDE"],[0.876254180602007,"#4D9FDF"],[0.879598662207358,"#4D9FDF"],[0.882943143812709,"#4DA0E0"],[0.88628762541806,"#4EA0E1"],[0.889632107023411,"#4EA1E1"],[0.892976588628763,"#4EA1E2"],[0.896321070234114,"#4EA2E3"],[0.899665551839465,"#4FA2E3"],[0.903010033444816,"#4FA3E4"],[0.906354515050167,"#4FA3E5"],[0.909698996655518,"#4FA4E5"],[0.91304347826087,"#50A4E6"],[0.916387959866221,"#50A5E7"],[0.919732441471572,"#50A5E7"],[0.923076923076923,"#50A6E8"],[0.926421404682274,"#51A6E8"],[0.929765886287625,"#51A7E9"],[0.933110367892977,"#51A7EA"],[0.936454849498328,"#51A8EA"],[0.939799331103679,"#52A8EB"],[0.94314381270903,"#52A9EC"],[0.946488294314381,"#52A9EC"],[0.949832775919732,"#52AAED"],[0.953177257525084,"#53AAEE"],[0.956521739130435,"#53ABEE"],[0.959866220735786,"#53ABEF"],[0.963210702341137,"#53ACF0"],[0.966555183946488,"#54ACF0"],[0.969899665551839,"#54ADF1"],[0.973244147157191,"#54ADF2"],[0.976588628762542,"#54AEF2"],[0.979933110367893,"#55AEF3"],[0.983277591973244,"#55AFF4"],[0.986622073578595,"#55AFF4"],[0.989966555183946,"#55B0F5"],[0.993311036789298,"#56B0F6"],[0.996655518394649,"#56B1F6"],[1,"#56B1F7"]],"colorbar":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"thickness":23.04,"title":"n","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickmode":"array","ticktext":["100","200","300","400","500"],"tickvals":[0.173489278752437,0.368421052631579,0.563352826510721,0.758284600389864,0.953216374269006],"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"ticklen":2,"len":0.5}},"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":26.2283105022831,"r":7.30593607305936,"b":40.1826484018265,"l":124.931506849315},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,3.6],"tickmode":"array","ticktext":["Non-Travel","Travel_Frequently","Travel_Rarely"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["Non-Travel","Travel_Frequently","Travel_Rarely"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"BusinessTravel","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a90226c3a93":{"fill":{},"x":{},"y":{},"type":"heatmap"}},"cur_data":"3a90226c3a93","visdat":{"3a90226c3a93":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># The Highest Attrition percentage was from those who Traveled rarely - 22%. Hence, I don&#39;t think business Travel is a factor for Attrition.
+  #Business Travel has a lower Median for Attrition than non Attrition
+#one department is seeing a high turnover </code></pre>
+<pre class="r"><code># Attrition vs Department
+
+attrition_department &lt;- ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = Department, colour = Attrition))+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. Department&quot;)
+  
+  ggplotly(attrition_department)</code></pre>
+<div id="htmlwidget-518953d6e58a855e3387" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-518953d6e58a855e3387">{"x":{"data":[{"x":[1,1,1],"y":[1,2,3],"text":["n:  29<br />Attrition: 1<br />Department: 1<br />Attrition: No","n: 487<br />Attrition: 1<br />Department: 2<br />Attrition: No","n: 214<br />Attrition: 1<br />Department: 3<br />Attrition: No"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":[7.91189470989502,22.6771653543307,16.2065376230821],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2,2],"y":[1,2,3],"text":["n:   6<br />Attrition: 2<br />Department: 1<br />Attrition: Yes","n:  75<br />Attrition: 2<br />Department: 2<br />Attrition: Yes","n:  59<br />Attrition: 2<br />Department: 3<br />Attrition: Yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":[3.77952755905512,10.9369974198385,10.0524933241633],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":181.984225819842},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. Department <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,3.6],"tickmode":"array","ticktext":["Human Resources","Research & Development","Sales"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["Human Resources","Research & Development","Sales"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"Department","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"y":0.93503937007874},"annotations":[{"text":"n<br />Attrition","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a904192f33":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"3a904192f33","visdat":{"3a904192f33":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>employee_data %&gt;% count(Attrition, Department)</code></pre>
+<pre><code>##    Attrition             Department   n
+## 1:        No        Human Resources  29
+## 2:        No Research &amp; Development 487
+## 3:        No                  Sales 214
+## 4:       Yes        Human Resources   6
+## 5:       Yes Research &amp; Development  75
+## 6:       Yes                  Sales  59</code></pre>
+<pre class="r"><code># 17% of those that left were from the Human Resources Department
+# 13% of those that left were from the Research &amp; Development Department
+# 21% of that that left were from the Sales Department
+
+attrition_department2 &lt;-  employee_data %&gt;% 
+  count(Attrition, Department)%&gt;%
+  ggplot(mapping = aes(x = Attrition,  y = Department)) +
+  geom_tile(mapping = aes(fill = n))+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. Department&quot;)
+
+  ggplotly(attrition_department2)</code></pre>
+<div id="htmlwidget-5f92a01560e5dbcf4d12" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-5f92a01560e5dbcf4d12">{"x":{"data":[{"x":[1,2],"y":[1,2,3],"z":[[0.0478170478170478,0],[1,0.143451143451143],[0.432432432432432,0.11018711018711]],"text":[["n:  29<br />Attrition: No<br />Department: Human Resources","n:   6<br />Attrition: Yes<br />Department: Human Resources"],["n: 487<br />Attrition: No<br />Department: Research & Development","n:  75<br />Attrition: Yes<br />Department: Research & Development"],["n: 214<br />Attrition: No<br />Department: Sales","n:  59<br />Attrition: Yes<br />Department: Sales"]],"colorscale":[[0,"#132B43"],[0.0478170478170478,"#16314B"],[0.11018711018711,"#1A3855"],[0.143451143451143,"#1C3C5A"],[0.432432432432432,"#2E618C"],[1,"#56B1F7"]],"type":"heatmap","showscale":false,"autocolorscale":false,"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1],"y":[1],"name":"99_9412a1d3099e7286b579edd65e15075e","type":"scatter","mode":"markers","opacity":0,"hoverinfo":"skip","showlegend":false,"marker":{"color":[0,1],"colorscale":[[0,"#132B43"],[0.00334448160535117,"#132B44"],[0.00668896321070234,"#132C44"],[0.0100334448160535,"#142C45"],[0.0133779264214047,"#142D45"],[0.0167224080267559,"#142D46"],[0.020066889632107,"#142D46"],[0.0234113712374582,"#142E47"],[0.0267558528428094,"#152E47"],[0.0301003344481605,"#152F48"],[0.0334448160535117,"#152F48"],[0.0367892976588629,"#152F49"],[0.040133779264214,"#153049"],[0.0434782608695652,"#16304A"],[0.0468227424749164,"#16304A"],[0.0501672240802676,"#16314B"],[0.0535117056856187,"#16314B"],[0.0568561872909699,"#16324C"],[0.0602006688963211,"#17324D"],[0.0635451505016722,"#17324D"],[0.0668896321070234,"#17334E"],[0.0702341137123746,"#17334E"],[0.0735785953177257,"#17344F"],[0.0769230769230769,"#18344F"],[0.0802675585284281,"#183450"],[0.0836120401337793,"#183550"],[0.0869565217391304,"#183551"],[0.0903010033444816,"#183651"],[0.0936454849498328,"#193652"],[0.0969899665551839,"#193652"],[0.100334448160535,"#193753"],[0.103678929765886,"#193754"],[0.107023411371237,"#193854"],[0.110367892976589,"#1A3855"],[0.11371237458194,"#1A3955"],[0.117056856187291,"#1A3956"],[0.120401337792642,"#1A3956"],[0.123745819397993,"#1A3A57"],[0.127090301003344,"#1B3A57"],[0.130434782608696,"#1B3B58"],[0.133779264214047,"#1B3B59"],[0.137123745819398,"#1B3B59"],[0.140468227424749,"#1C3C5A"],[0.1438127090301,"#1C3C5A"],[0.147157190635451,"#1C3D5B"],[0.150501672240803,"#1C3D5B"],[0.153846153846154,"#1C3D5C"],[0.157190635451505,"#1D3E5C"],[0.160535117056856,"#1D3E5D"],[0.163879598662207,"#1D3F5D"],[0.167224080267559,"#1D3F5E"],[0.17056856187291,"#1D3F5F"],[0.173913043478261,"#1E405F"],[0.177257525083612,"#1E4060"],[0.180602006688963,"#1E4160"],[0.183946488294314,"#1E4161"],[0.187290969899666,"#1E4261"],[0.190635451505017,"#1F4262"],[0.193979933110368,"#1F4263"],[0.197324414715719,"#1F4363"],[0.20066889632107,"#1F4364"],[0.204013377926421,"#1F4464"],[0.207357859531773,"#204465"],[0.210702341137124,"#204465"],[0.214046822742475,"#204566"],[0.217391304347826,"#204566"],[0.220735785953177,"#214667"],[0.224080267558528,"#214668"],[0.22742474916388,"#214768"],[0.230769230769231,"#214769"],[0.234113712374582,"#214769"],[0.237458193979933,"#22486A"],[0.240802675585284,"#22486A"],[0.244147157190635,"#22496B"],[0.247491638795987,"#22496C"],[0.250836120401338,"#224A6C"],[0.254180602006689,"#234A6D"],[0.25752508361204,"#234A6D"],[0.260869565217391,"#234B6E"],[0.264214046822742,"#234B6E"],[0.267558528428094,"#244C6F"],[0.270903010033445,"#244C70"],[0.274247491638796,"#244C70"],[0.277591973244147,"#244D71"],[0.280936454849498,"#244D71"],[0.28428093645485,"#254E72"],[0.287625418060201,"#254E72"],[0.290969899665552,"#254F73"],[0.294314381270903,"#254F74"],[0.297658862876254,"#254F74"],[0.301003344481605,"#265075"],[0.304347826086957,"#265075"],[0.307692307692308,"#265176"],[0.311036789297659,"#265176"],[0.31438127090301,"#275277"],[0.317725752508361,"#275278"],[0.321070234113712,"#275278"],[0.324414715719064,"#275379"],[0.327759197324415,"#275379"],[0.331103678929766,"#28547A"],[0.334448160535117,"#28547B"],[0.337792642140468,"#28557B"],[0.341137123745819,"#28557C"],[0.344481605351171,"#28567C"],[0.347826086956522,"#29567D"],[0.351170568561873,"#29567D"],[0.354515050167224,"#29577E"],[0.357859531772575,"#29577F"],[0.361204013377926,"#2A587F"],[0.364548494983278,"#2A5880"],[0.367892976588629,"#2A5980"],[0.37123745819398,"#2A5981"],[0.374581939799331,"#2A5982"],[0.377926421404682,"#2B5A82"],[0.381270903010033,"#2B5A83"],[0.384615384615385,"#2B5B83"],[0.387959866220736,"#2B5B84"],[0.391304347826087,"#2C5C85"],[0.394648829431438,"#2C5C85"],[0.397993311036789,"#2C5D86"],[0.40133779264214,"#2C5D86"],[0.404682274247492,"#2C5D87"],[0.408026755852843,"#2D5E87"],[0.411371237458194,"#2D5E88"],[0.414715719063545,"#2D5F89"],[0.418060200668896,"#2D5F89"],[0.421404682274248,"#2E608A"],[0.424749163879599,"#2E608A"],[0.42809364548495,"#2E618B"],[0.431438127090301,"#2E618C"],[0.434782608695652,"#2E618C"],[0.438127090301003,"#2F628D"],[0.441471571906355,"#2F628D"],[0.444816053511706,"#2F638E"],[0.448160535117057,"#2F638F"],[0.451505016722408,"#30648F"],[0.454849498327759,"#306490"],[0.45819397993311,"#306590"],[0.461538461538462,"#306591"],[0.464882943143813,"#306592"],[0.468227424749164,"#316692"],[0.471571906354515,"#316693"],[0.474916387959866,"#316793"],[0.478260869565217,"#316794"],[0.481605351170569,"#326895"],[0.48494983277592,"#326895"],[0.488294314381271,"#326996"],[0.491638795986622,"#326996"],[0.494983277591973,"#326997"],[0.498327759197324,"#336A98"],[0.501672240802676,"#336A98"],[0.505016722408027,"#336B99"],[0.508361204013378,"#336B99"],[0.511705685618729,"#346C9A"],[0.51505016722408,"#346C9B"],[0.518394648829431,"#346D9B"],[0.521739130434783,"#346D9C"],[0.525083612040134,"#346E9D"],[0.528428093645485,"#356E9D"],[0.531772575250836,"#356E9E"],[0.535117056856187,"#356F9E"],[0.538461538461538,"#356F9F"],[0.54180602006689,"#3670A0"],[0.545150501672241,"#3670A0"],[0.548494983277592,"#3671A1"],[0.551839464882943,"#3671A1"],[0.555183946488294,"#3772A2"],[0.558528428093646,"#3772A3"],[0.561872909698997,"#3773A3"],[0.565217391304348,"#3773A4"],[0.568561872909699,"#3773A4"],[0.57190635451505,"#3874A5"],[0.575250836120401,"#3874A6"],[0.578595317725752,"#3875A6"],[0.581939799331104,"#3875A7"],[0.585284280936455,"#3976A8"],[0.588628762541806,"#3976A8"],[0.591973244147157,"#3977A9"],[0.595317725752508,"#3977A9"],[0.59866220735786,"#3978AA"],[0.602006688963211,"#3A78AB"],[0.605351170568562,"#3A79AB"],[0.608695652173913,"#3A79AC"],[0.612040133779264,"#3A79AC"],[0.615384615384615,"#3B7AAD"],[0.618729096989967,"#3B7AAE"],[0.622073578595318,"#3B7BAE"],[0.625418060200669,"#3B7BAF"],[0.62876254180602,"#3C7CB0"],[0.632107023411371,"#3C7CB0"],[0.635451505016722,"#3C7DB1"],[0.638795986622074,"#3C7DB1"],[0.642140468227425,"#3C7EB2"],[0.645484949832776,"#3D7EB3"],[0.648829431438127,"#3D7FB3"],[0.652173913043478,"#3D7FB4"],[0.655518394648829,"#3D7FB5"],[0.658862876254181,"#3E80B5"],[0.662207357859532,"#3E80B6"],[0.665551839464883,"#3E81B6"],[0.668896321070234,"#3E81B7"],[0.672240802675585,"#3F82B8"],[0.675585284280936,"#3F82B8"],[0.678929765886288,"#3F83B9"],[0.682274247491639,"#3F83BA"],[0.68561872909699,"#4084BA"],[0.688963210702341,"#4084BB"],[0.692307692307692,"#4085BB"],[0.695652173913044,"#4085BC"],[0.698996655518395,"#4086BD"],[0.702341137123746,"#4186BD"],[0.705685618729097,"#4186BE"],[0.709030100334448,"#4187BF"],[0.712374581939799,"#4187BF"],[0.71571906354515,"#4288C0"],[0.719063545150502,"#4288C1"],[0.722408026755853,"#4289C1"],[0.725752508361204,"#4289C2"],[0.729096989966555,"#438AC2"],[0.732441471571906,"#438AC3"],[0.735785953177258,"#438BC4"],[0.739130434782609,"#438BC4"],[0.74247491638796,"#438CC5"],[0.745819397993311,"#448CC6"],[0.749163879598662,"#448DC6"],[0.752508361204013,"#448DC7"],[0.755852842809365,"#448EC8"],[0.759197324414716,"#458EC8"],[0.762541806020067,"#458FC9"],[0.765886287625418,"#458FC9"],[0.769230769230769,"#458FCA"],[0.77257525083612,"#4690CB"],[0.775919732441471,"#4690CB"],[0.779264214046823,"#4691CC"],[0.782608695652174,"#4691CD"],[0.785953177257525,"#4792CD"],[0.789297658862876,"#4792CE"],[0.792642140468227,"#4793CF"],[0.795986622073579,"#4793CF"],[0.79933110367893,"#4894D0"],[0.802675585284281,"#4894D0"],[0.806020066889632,"#4895D1"],[0.809364548494983,"#4895D2"],[0.812709030100334,"#4896D2"],[0.816053511705686,"#4996D3"],[0.819397993311037,"#4997D4"],[0.822742474916388,"#4997D4"],[0.826086956521739,"#4998D5"],[0.82943143812709,"#4A98D6"],[0.832775919732441,"#4A99D6"],[0.836120401337793,"#4A99D7"],[0.839464882943144,"#4A9AD8"],[0.842809364548495,"#4B9AD8"],[0.846153846153846,"#4B9BD9"],[0.849498327759197,"#4B9BDA"],[0.852842809364548,"#4B9BDA"],[0.8561872909699,"#4C9CDB"],[0.859531772575251,"#4C9CDB"],[0.862876254180602,"#4C9DDC"],[0.866220735785953,"#4C9DDD"],[0.869565217391304,"#4D9EDD"],[0.872909698996655,"#4D9EDE"],[0.876254180602007,"#4D9FDF"],[0.879598662207358,"#4D9FDF"],[0.882943143812709,"#4DA0E0"],[0.88628762541806,"#4EA0E1"],[0.889632107023411,"#4EA1E1"],[0.892976588628763,"#4EA1E2"],[0.896321070234114,"#4EA2E3"],[0.899665551839465,"#4FA2E3"],[0.903010033444816,"#4FA3E4"],[0.906354515050167,"#4FA3E5"],[0.909698996655518,"#4FA4E5"],[0.91304347826087,"#50A4E6"],[0.916387959866221,"#50A5E7"],[0.919732441471572,"#50A5E7"],[0.923076923076923,"#50A6E8"],[0.926421404682274,"#51A6E8"],[0.929765886287625,"#51A7E9"],[0.933110367892977,"#51A7EA"],[0.936454849498328,"#51A8EA"],[0.939799331103679,"#52A8EB"],[0.94314381270903,"#52A9EC"],[0.946488294314381,"#52A9EC"],[0.949832775919732,"#52AAED"],[0.953177257525084,"#53AAEE"],[0.956521739130435,"#53ABEE"],[0.959866220735786,"#53ABEF"],[0.963210702341137,"#53ACF0"],[0.966555183946488,"#54ACF0"],[0.969899665551839,"#54ADF1"],[0.973244147157191,"#54ADF2"],[0.976588628762542,"#54AEF2"],[0.979933110367893,"#55AEF3"],[0.983277591973244,"#55AFF4"],[0.986622073578595,"#55AFF4"],[0.989966555183946,"#55B0F5"],[0.993311036789298,"#56B0F6"],[0.996655518394649,"#56B1F6"],[1,"#56B1F7"]],"colorbar":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"thickness":23.04,"title":"n","titlefont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickmode":"array","ticktext":["100","200","300","400"],"tickvals":[0.195426195426195,0.403326403326403,0.611226611226611,0.819126819126819],"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"ticklen":2,"len":0.5}},"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":181.984225819842},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. Department <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,3.6],"tickmode":"array","ticktext":["Human Resources","Research & Development","Sales"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["Human Resources","Research & Development","Sales"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"Department","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a905cbf2649":{"fill":{},"x":{},"y":{},"type":"heatmap"}},"cur_data":"3a905cbf2649","visdat":{"3a905cbf2649":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># Do sales people work more overtime?
+  
+  ggplotly(ggplot(data = employee_data)+
+    geom_bar(mapping = aes(x = Department, fill = OverTime, alpha = JobRole), position = &quot;dodge&quot;) +
+    ggtitle(&quot;Overtime by Department&quot;)+
+    xlab(&quot;Department&quot;)+
+    ylab(&quot;Number of Employees&quot;)+
+    theme_economist()+
+      theme(legend.position = &quot;none&quot;)
+  )</code></pre>
+<div id="htmlwidget-2802864e9e9b740086ce" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-2802864e9e9b740086ce">{"x":{"data":[{"orientation":"v","width":0.0750000000000002,"base":0,"x":[1.5875],"y":[54],"text":"count:  54<br />Department: Research & Development<br />OverTime: No<br />JobRole: Healthcare Representative","type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,0.1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Healthcare Representative)","legendgroup":"(No,Healthcare Representative)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.225,"base":0,"x":[0.6625],"y":[21],"text":"count:  21<br />Department: Human Resources<br />OverTime: No<br />JobRole: Human Resources","type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,0.2125)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Human Resources)","legendgroup":"(No,Human Resources)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[1.6625],"y":[120],"text":"count: 120<br />Department: Research & Development<br />OverTime: No<br />JobRole: Laboratory Technician","type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,0.325)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Laboratory Technician)","legendgroup":"(No,Laboratory Technician)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.225,0.0750000000000002,0.15],"base":[0,0,0],"x":[0.8875,1.7375,2.625],"y":[6,18,17],"text":["count:   6<br />Department: Human Resources<br />OverTime: No<br />JobRole: Manager","count:  18<br />Department: Research & Development<br />OverTime: No<br />JobRole: Manager","count:  17<br />Department: Sales<br />OverTime: No<br />JobRole: Manager"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,0.4375)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Manager)","legendgroup":"(No,Manager)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[1.8125],"y":[64],"text":"count:  64<br />Department: Research & Development<br />OverTime: No<br />JobRole: Manufacturing Director","type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,0.55)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Manufacturing Director)","legendgroup":"(No,Manufacturing Director)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[1.8875],"y":[35],"text":"count:  35<br />Department: Research & Development<br />OverTime: No<br />JobRole: Research Director","type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,0.6625)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Research Director)","legendgroup":"(No,Research Director)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[1.9625],"y":[107],"text":"count: 107<br />Department: Research & Development<br />OverTime: No<br />JobRole: Research Scientist","type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,0.775)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Research Scientist)","legendgroup":"(No,Research Scientist)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.15,"base":0,"x":[2.775],"y":[141],"text":"count: 141<br />Department: Sales<br />OverTime: No<br />JobRole: Sales Executive","type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,0.8875)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Sales Executive)","legendgroup":"(No,Sales Executive)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.15,"base":0,"x":[2.925],"y":[35],"text":"count:  35<br />Department: Sales<br />OverTime: No<br />JobRole: Sales Representative","type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(No,Sales Representative)","legendgroup":"(No,Sales Representative)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[2.0375],"y":[22],"text":"count:  22<br />Department: Research & Development<br />OverTime: Yes<br />JobRole: Healthcare Representative","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,0.1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Healthcare Representative)","legendgroup":"(Yes,Healthcare Representative)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.225,"base":0,"x":[1.1125],"y":[6],"text":"count:   6<br />Department: Human Resources<br />OverTime: Yes<br />JobRole: Human Resources","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,0.2125)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Human Resources)","legendgroup":"(Yes,Human Resources)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[2.1125],"y":[33],"text":"count:  33<br />Department: Research & Development<br />OverTime: Yes<br />JobRole: Laboratory Technician","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,0.325)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Laboratory Technician)","legendgroup":"(Yes,Laboratory Technician)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.225,0.0750000000000002,0.15],"base":[0,0,0],"x":[1.3375,2.1875,3.075],"y":[2,5,3],"text":["count:   2<br />Department: Human Resources<br />OverTime: Yes<br />JobRole: Manager","count:   5<br />Department: Research & Development<br />OverTime: Yes<br />JobRole: Manager","count:   3<br />Department: Sales<br />OverTime: Yes<br />JobRole: Manager"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,0.4375)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Manager)","legendgroup":"(Yes,Manager)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[2.2625],"y":[23],"text":"count:  23<br />Department: Research & Development<br />OverTime: Yes<br />JobRole: Manufacturing Director","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,0.55)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Manufacturing Director)","legendgroup":"(Yes,Manufacturing Director)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[2.3375],"y":[16],"text":"count:  16<br />Department: Research & Development<br />OverTime: Yes<br />JobRole: Research Director","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,0.6625)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Research Director)","legendgroup":"(Yes,Research Director)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.0750000000000002,"base":0,"x":[2.4125],"y":[65],"text":"count:  65<br />Department: Research & Development<br />OverTime: Yes<br />JobRole: Research Scientist","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,0.775)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Research Scientist)","legendgroup":"(Yes,Research Scientist)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.15,"base":0,"x":[3.225],"y":[59],"text":"count:  59<br />Department: Sales<br />OverTime: Yes<br />JobRole: Sales Executive","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,0.8875)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Sales Executive)","legendgroup":"(Yes,Sales Executive)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":0.15,"base":0,"x":[3.375],"y":[18],"text":"count:  18<br />Department: Sales<br />OverTime: Yes<br />JobRole: Sales Representative","type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"(Yes,Sales Representative)","legendgroup":"(Yes,Sales Representative)","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":43.1714404317144},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Overtime by Department <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,3.6],"tickmode":"array","ticktext":["Human Resources","Research & Development","Sales"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["Human Resources","Research & Development","Sales"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Department","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-7.05,148.05],"tickmode":"array","ticktext":["0","50","100"],"tickvals":[8.88178419700125e-16,50,100],"categoryorder":"array","categoryarray":["0","50","100"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"Number of Employees","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a9079f1f52":{"x":{},"fill":{},"alpha":{},"type":"bar"}},"cur_data":"3a9079f1f52","visdat":{"3a9079f1f52":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># No. There is a higher percentage of people working overtime in the Research and Development Department - 29%
+  #65% of Overtime comes from the Research &amp; Development Department
+  #32% of Overtime comes from the Sales Department
+
+PieChart(Department, data = employee_data, hole = 0)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
+<pre><code>## &gt;&gt;&gt; Suggestions
+## PieChart(Department, hole=0)  # traditional pie chart
+## PieChart(Department, values=&quot;%&quot;)  # display %&#39;s on the chart
+## BarChart(Department)  # bar chart
+## Plot(Department)  # bubble plot
+## Plot(Department, values=&quot;count&quot;)  # lollipop plot 
+## 
+## 
+## --- Department ---
+## 
+## 
+##                Human Resources  Research&amp;Development  Sales     Total 
+## Frequencies:                35                   562    273       870 
+## Proportions:             0.040                 0.646  0.314     1.000 
+## 
+## 
+## Chi-squared test of null hypothesis of equal probabilities 
+##   Chisq = 480.338, df = 2, p-value = 0.000</code></pre>
+<pre class="r"><code># The Research and Development Department makes up 65% of the company. Department is not one of the Factors that leads to Attrition.
+
+# What is the percentage of non-exempt people leaving the company versus full time?</code></pre>
+<pre class="r"><code># Attrition v. EducationField
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = EducationField, colour = Attrition))+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. EducationField&quot;))</code></pre>
+<div id="htmlwidget-fd77a164c9bad62110f2" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fd77a164c9bad62110f2">{"x":{"data":[{"x":[1,1,1,1,1,1],"y":[1,2,3,4,5,6],"text":["n:  11<br />Attrition: 1<br />EducationField: 1<br />Attrition: No","n: 305<br />Attrition: 1<br />EducationField: 2<br />Attrition: No","n:  80<br />Attrition: 1<br />EducationField: 3<br />Attrition: No","n: 233<br />Attrition: 1<br />EducationField: 4<br />Attrition: No","n:  43<br />Attrition: 1<br />EducationField: 5<br />Attrition: No","n:  58<br />Attrition: 1<br />EducationField: 6<br />Attrition: No"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":[6.66139030549804,22.6771653543307,13.2753168483702,20.2627460019695,10.5818400091823,11.7837869253829],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2,2,2,2,2],"y":[1,2,3,4,5,6],"text":["n:   4<br />Attrition: 2<br />EducationField: 1<br />Attrition: Yes","n:  53<br />Attrition: 2<br />EducationField: 2<br />Attrition: Yes","n:  20<br />Attrition: 2<br />EducationField: 3<br />Attrition: Yes","n:  37<br />Attrition: 2<br />EducationField: 4<br />Attrition: Yes","n:   9<br />Attrition: 2<br />EducationField: 5<br />Attrition: Yes","n:  17<br />Attrition: 2<br />EducationField: 6<br />Attrition: Yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":[3.77952755905512,11.4042196987647,8.13649449603201,10.0367449386448,6.21514612075496,7.70684448324799],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":138.148609381486},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. EducationField <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,6.6],"tickmode":"array","ticktext":["Human Resources","Life Sciences","Marketing","Medical","Other","Technical Degree"],"tickvals":[1,2,3,4,5,6],"categoryorder":"array","categoryarray":["Human Resources","Life Sciences","Marketing","Medical","Other","Technical Degree"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"EducationField","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"y":0.93503937007874},"annotations":[{"text":"Attrition<br />n","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a90234c7c90":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"3a90234c7c90","visdat":{"3a90234c7c90":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>employee_data %&gt;% count(Attrition, EducationField)  </code></pre>
+<pre><code>##     Attrition   EducationField   n
+##  1:        No  Human Resources  11
+##  2:        No    Life Sciences 305
+##  3:        No        Marketing  80
+##  4:        No          Medical 233
+##  5:        No            Other  43
+##  6:        No Technical Degree  58
+##  7:       Yes  Human Resources   4
+##  8:       Yes    Life Sciences  53
+##  9:       Yes        Marketing  20
+## 10:       Yes          Medical  37
+## 11:       Yes            Other   9
+## 12:       Yes Technical Degree  17</code></pre>
+<pre class="r"><code># Attrition v. Gender
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = Gender, colour = Attrition))+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. Gender&quot;))</code></pre>
+<div id="htmlwidget-9b182235f57bc766957c" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9b182235f57bc766957c">{"x":{"data":[{"x":[1,1],"y":[1,2],"text":["n: 301<br />Attrition: 1<br />Gender: 1<br />Attrition: No","n: 429<br />Attrition: 1<br />Gender: 2<br />Attrition: No"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":[19.1270910509571,22.6771653543307],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2],"y":[1,2],"text":["n:  53<br />Attrition: 2<br />Gender: 1<br />Attrition: Yes","n:  87<br />Attrition: 2<br />Gender: 2<br />Attrition: Yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":[3.77952755905512,9.46220567268323],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":65.0892486508925},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. Gender <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["Female","Male"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["Female","Male"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"Gender","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"y":0.93503937007874},"annotations":[{"text":"n<br />Attrition","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a9071b15183":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"3a9071b15183","visdat":{"3a9071b15183":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>employee_data %&gt;% count(Attrition, Gender)</code></pre>
+<pre><code>##    Attrition Gender   n
+## 1:        No Female 301
+## 2:        No   Male 429
+## 3:       Yes Female  53
+## 4:       Yes   Male  87</code></pre>
+<pre class="r"><code># There are more males working in the company than females.
+# The attrition rate among the two Genders were approximately the same at 15%
+# No indicative of Attrition</code></pre>
+<pre class="r"><code># Attrition v. JobRole
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = JobRole, color = OverTime))+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. JobRole&quot;))</code></pre>
+<div id="htmlwidget-c23da64f5be69b9a00dd" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-c23da64f5be69b9a00dd">{"x":{"data":[{"x":[1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2],"y":[1,2,3,4,5,6,7,8,9,1,2,3,4,6,7,8,9],"text":["n:  48<br />Attrition: 1<br />JobRole: 1<br />OverTime: No","n:  17<br />Attrition: 1<br />JobRole: 2<br />OverTime: No","n: 105<br />Attrition: 1<br />JobRole: 3<br />OverTime: No","n:  40<br />Attrition: 1<br />JobRole: 4<br />OverTime: No","n:  64<br />Attrition: 1<br />JobRole: 5<br />OverTime: No","n:  34<br />Attrition: 1<br />JobRole: 6<br />OverTime: No","n:  98<br />Attrition: 1<br />JobRole: 7<br />OverTime: No","n: 127<br />Attrition: 1<br />JobRole: 8<br />OverTime: No","n:  25<br />Attrition: 1<br />JobRole: 9<br />OverTime: No","n:   6<br />Attrition: 2<br />JobRole: 1<br />OverTime: No","n:   4<br />Attrition: 2<br />JobRole: 2<br />OverTime: No","n:  15<br />Attrition: 2<br />JobRole: 3<br />OverTime: No","n:   1<br />Attrition: 2<br />JobRole: 4<br />OverTime: No","n:   1<br />Attrition: 2<br />JobRole: 6<br />OverTime: No","n:   9<br />Attrition: 2<br />JobRole: 7<br />OverTime: No","n:  14<br />Attrition: 2<br />JobRole: 8<br />OverTime: No","n:  10<br />Attrition: 2<br />JobRole: 9<br />OverTime: No"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":[15.3212646464618,10.5136690875572,20.9482870896188,14.2932026506618,17.1421753925017,13.4507020293384,20.3604281419017,22.6771653543307,12.0271328593131,7.54402711601384,6.69549637723638,10.0787401574803,3.77952755905512,3.77952755905512,8.54128469932885,9.8496007033665,8.83013370543164],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2],"y":[1,2,3,4,5,6,7,8,9,1,2,3,4,5,7,8,9],"text":["n:  20<br />Attrition: 1<br />JobRole: 1<br />OverTime: Yes","n:   4<br />Attrition: 1<br />JobRole: 2<br />OverTime: Yes","n:  18<br />Attrition: 1<br />JobRole: 3<br />OverTime: Yes","n:   7<br />Attrition: 1<br />JobRole: 4<br />OverTime: Yes","n:  21<br />Attrition: 1<br />JobRole: 5<br />OverTime: Yes","n:  16<br />Attrition: 1<br />JobRole: 6<br />OverTime: Yes","n:  42<br />Attrition: 1<br />JobRole: 7<br />OverTime: Yes","n:  40<br />Attrition: 1<br />JobRole: 8<br />OverTime: Yes","n:   4<br />Attrition: 1<br />JobRole: 9<br />OverTime: Yes","n:   2<br />Attrition: 2<br />JobRole: 1<br />OverTime: Yes","n:   2<br />Attrition: 2<br />JobRole: 2<br />OverTime: Yes","n:  15<br />Attrition: 2<br />JobRole: 3<br />OverTime: Yes","n:   3<br />Attrition: 2<br />JobRole: 4<br />OverTime: Yes","n:   2<br />Attrition: 2<br />JobRole: 5<br />OverTime: Yes","n:  23<br />Attrition: 2<br />JobRole: 7<br />OverTime: Yes","n:  19<br />Attrition: 2<br />JobRole: 8<br />OverTime: Yes","n:  14<br />Attrition: 2<br />JobRole: 9<br />OverTime: Yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":[11.1178881576153,6.69549637723638,10.7209217640232,7.90333020918411,11.3085266729726,10.2998320567782,14.5594137689187,14.2932026506618,6.69549637723638,5.46306294118063,5.46306294118063,10.0787401574803,6.16040612919198,5.46306294118063,11.676008447597,10.9221632694657,9.8496007033665],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":203.90203403902},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. JobRole <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,9.6],"tickmode":"array","ticktext":["Healthcare Representative","Human Resources","Laboratory Technician","Manager","Manufacturing Director","Research Director","Research Scientist","Sales Executive","Sales Representative"],"tickvals":[1,2,3,4,5,6,7,8,9],"categoryorder":"array","categoryarray":["Healthcare Representative","Human Resources","Laboratory Technician","Manager","Manufacturing Director","Research Director","Research Scientist","Sales Executive","Sales Representative"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"JobRole","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"y":0.93503937007874},"annotations":[{"text":"n<br />OverTime","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a9052171be7":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"3a9052171be7","visdat":{"3a9052171be7":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># JobRole is not a factor for Attrition.
+
+BarChart(JobRole, by=Department, data = employee_data)</code></pre>
+<pre><code>## Table output is vertical to fit in window, but &gt; 30 rows
+## To view the complete table, save the output
+##   to an object, e.g., b &lt;- BarChart(...)
+##   then b$freq</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-10-2.png" width="672" /></p>
+<pre><code>## &gt;&gt;&gt; Suggestions
+## Plot(JobRole, Department)  # bubble plot
+## BarChart(JobRole, by=Department, horiz=TRUE)  # horizontal bar chart
+## BarChart(JobRole, fill=&quot;steelblue&quot;)  # steelblue bars 
+## 
+## 
+## Cramer&#39;s V: 0.933 
+##  
+## Chi-square Test:  Chisq = 1514.047, df = 16, p-value = 0.000 
+## &gt;&gt;&gt; Low cell expected frequencies, chi-squared approximation may not be accurate</code></pre>
+<pre class="r"><code>employee_data %&gt;% ggplot(mapping = aes(x = JobRole, fill = Attrition))+
+  geom_bar()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-10-3.png" width="672" /></p>
+<pre class="r"><code>Attrititon_table &lt;- data.frame(employee_data %&gt;% count(Attrition, JobRole))
+Attrititon_table</code></pre>
+<pre><code>##    Attrition                   JobRole   n
+## 1         No Healthcare Representative  68
+## 2         No           Human Resources  21
+## 3         No     Laboratory Technician 123
+## 4         No                   Manager  47
+## 5         No    Manufacturing Director  85
+## 6         No         Research Director  50
+## 7         No        Research Scientist 140
+## 8         No           Sales Executive 167
+## 9         No      Sales Representative  29
+## 10       Yes Healthcare Representative   8
+## 11       Yes           Human Resources   6
+## 12       Yes     Laboratory Technician  30
+## 13       Yes                   Manager   4
+## 14       Yes    Manufacturing Director   2
+## 15       Yes         Research Director   1
+## 16       Yes        Research Scientist  32
+## 17       Yes           Sales Executive  33
+## 18       Yes      Sales Representative  24</code></pre>
+<pre class="r"><code>ggplot(data = Attrititon_table, mapping = aes(x = JobRole, y = n))+
+  geom_boxplot()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-10-4.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = employee_data, aes(x = JobRole, y= Attrition, color = Attrition))+
+  geom_count()+
+  coord_flip()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-10-5.png" width="672" /></p>
+<pre class="r"><code># Attrition v. MaritalStatus
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = MaritalStatus, color = Attrition))+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. MaritalStatus&quot;))</code></pre>
+<div id="htmlwidget-b8d4c3d083ce26bf9f7f" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-b8d4c3d083ce26bf9f7f">{"x":{"data":[{"x":[1,1,1],"y":[1,2,3],"text":["n: 179<br />Attrition: 1<br />MaritalStatus: 1<br />Attrition: No","n: 352<br />Attrition: 1<br />MaritalStatus: 2<br />Attrition: No","n: 199<br />Attrition: 1<br />MaritalStatus: 3<br />Attrition: No"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":[17.0237448630355,22.6771653543307,17.7943908417556],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2,2,2],"y":[1,2,3],"text":["n:  12<br />Attrition: 2<br />MaritalStatus: 1<br />Attrition: Yes","n:  58<br />Attrition: 2<br />MaritalStatus: 2<br />Attrition: Yes","n:  70<br />Attrition: 2<br />MaritalStatus: 3<br />Attrition: Yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":[3.77952755905512,10.730522590472,11.5846920306995],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":79.7011207970112},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. MaritalStatus <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,3.6],"tickmode":"array","ticktext":["Divorced","Married","Single"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["Divorced","Married","Single"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"MaritalStatus","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"y":0.93503937007874},"annotations":[{"text":"Attrition<br />n","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a9059b0622b":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"3a9059b0622b","visdat":{"3a9059b0622b":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>employee_data %&gt;% count(Attrition, MaritalStatus)</code></pre>
+<pre><code>##    Attrition MaritalStatus   n
+## 1:        No      Divorced 179
+## 2:        No       Married 352
+## 3:        No        Single 199
+## 4:       Yes      Divorced  12
+## 5:       Yes       Married  58
+## 6:       Yes        Single  70</code></pre>
+<pre class="r"><code># Higher Attrition count among Single people
+
+70+199</code></pre>
+<pre><code>## [1] 269</code></pre>
+<pre class="r"><code>70/269*100 # 26%</code></pre>
+<pre><code>## [1] 26.0223</code></pre>
+<pre class="r"><code>70/140*100 #50%</code></pre>
+<pre><code>## [1] 50</code></pre>
+<pre class="r"><code>58+352</code></pre>
+<pre><code>## [1] 410</code></pre>
+<pre class="r"><code>58/410*100 # 14%</code></pre>
+<pre><code>## [1] 14.14634</code></pre>
+<pre class="r"><code>58/140*100 # 41%</code></pre>
+<pre><code>## [1] 41.42857</code></pre>
+<pre class="r"><code>12+179</code></pre>
+<pre><code>## [1] 191</code></pre>
+<pre class="r"><code>12/179*100 # 6%, </code></pre>
+<pre><code>## [1] 6.703911</code></pre>
+<pre class="r"><code>12/140*100 # 8 %</code></pre>
+<pre><code>## [1] 8.571429</code></pre>
+<pre class="r"><code>ggplotly(ggplot(data = employee_data, mapping =  aes(x = OverTime, y = MaritalStatus, fill = Attrition))+
+  geom_count()+
+  coord_flip()
+)</code></pre>
+<div id="htmlwidget-dfe31f8a8b0bb4bc6fd7" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-dfe31f8a8b0bb4bc6fd7">{"x":{"data":[{"x":[1,2,3,1,2,3],"y":[1,1,1,2,2,2],"text":["n: 126<br />OverTime: 1<br />MaritalStatus: 1<br />Attrition: No","n: 272<br />OverTime: 1<br />MaritalStatus: 2<br />Attrition: No","n: 160<br />OverTime: 1<br />MaritalStatus: 3<br />Attrition: No","n:  53<br />OverTime: 2<br />MaritalStatus: 1<br />Attrition: No","n:  80<br />OverTime: 2<br />MaritalStatus: 2<br />Attrition: No","n:  39<br />OverTime: 2<br />MaritalStatus: 3<br />Attrition: No"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":[16.4723243009663,22.6771653543307,18.1584738945389,11.7230958112006,13.7469430531074,10.435686324526],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[1,2,3,1,2,3],"y":[1,1,1,2,2,2],"text":["n:   6<br />OverTime: 1<br />MaritalStatus: 1<br />Attrition: Yes","n:  28<br />OverTime: 1<br />MaritalStatus: 2<br />Attrition: Yes","n:  26<br />OverTime: 1<br />MaritalStatus: 3<br />Attrition: Yes","n:   6<br />OverTime: 2<br />MaritalStatus: 1<br />Attrition: Yes","n:  30<br />OverTime: 2<br />MaritalStatus: 2<br />Attrition: Yes","n:  44<br />OverTime: 2<br />MaritalStatus: 3<br />Attrition: Yes"],"type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":[3.77952755905512,9.2142584331742,8.96134013014566,3.77952755905512,9.45591882695538,10.9221632694657],"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.2283105022831,"r":7.30593607305936,"b":40.1826484018265,"l":43.1050228310502},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,3.6],"tickmode":"array","ticktext":["Divorced","Married","Single"],"tickvals":[1,2,3],"categoryorder":"array","categoryarray":["Divorced","Married","Single"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"MaritalStatus","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"OverTime","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.93503937007874},"annotations":[{"text":"Attrition<br />n","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a90ab43dea":{"x":{},"y":{},"fill":{},"type":"scatter"}},"cur_data":"3a90ab43dea","visdat":{"3a90ab43dea":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>employee_maritalstatus &lt;- employee_data[,c(3,19)]
+
+view(employee_data)
+
+mosaicplot(Attrition~MaritalStatus, data = employee_data, col=c(&quot;Blue&quot;, &quot;red4&quot;, &quot;Green&quot;), main =&quot;Attrition vs MaritalStatus&quot;, xlab = &quot;Attrition&quot;, ylab = &quot;MaritalStatus&quot;, las =1, border = &quot;chocolate&quot;, shade = TRUE)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-11-3.png" width="672" /></p>
+<pre class="r"><code># Attrition v. Over18
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = Over18, colour = Attrition))+
+  theme_economist()+
+  ggtitle(&quot;Attrition vs. Over18&quot;))</code></pre>
+<div id="htmlwidget-7fb9ba2188321b545da4" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7fb9ba2188321b545da4">{"x":{"data":[{"x":[1],"y":[1],"text":"n: 730<br />Attrition: 1<br />Over18: 1<br />Attrition: No","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","opacity":1,"size":22.6771653543307,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(248,118,109,1)"}},"hoveron":"points","name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"x":[2],"y":[1],"text":"n: 140<br />Attrition: 2<br />Over18: 1<br />Attrition: Yes","type":"scatter","mode":"markers","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","opacity":1,"size":3.77952755905512,"symbol":"circle","line":{"width":1.88976377952756,"color":"rgba(0,191,196,1)"}},"hoveron":"points","name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":28.5595682855957},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs. Over18 <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,1.6],"tickmode":"array","ticktext":["Y"],"tickvals":[1],"categoryorder":"array","categoryarray":["Y"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"Over18","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"y":0.93503937007874},"annotations":[{"text":"n<br />Attrition","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a90317b720c":{"x":{},"y":{},"colour":{},"type":"scatter"}},"cur_data":"3a90317b720c","visdat":{"3a90317b720c":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># No significance to the Study. All observations are over18.</code></pre>
+</div>
+<div id="find-where-attrition-is-highest-among-the-continuous-variables" class="section level1">
+<h1>Find where Attrition is highest among the Continuous variables</h1>
+<pre class="r"><code>employee_data %&gt;% 
+  select (Attrition, YearsInCurrentRole, YearsSinceLastPromotion, YearsWithCurrManager) %&gt;%
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<pre class="r"><code># Attrition looks to have the lowest median in the &quot;Years in current role&quot; variable and No Attrition have the highest, why?
+# Attrition looks to have the lowest median in the &quot;Years with Current Manager&quot; and No Attrition have the highest, why?
+# Attrition has a high correlation with &quot;Years In current role&quot; and Years with current manager? why? Overall the Correlation is 0.709 (Strong)
+# Attrition has a medium correlation with &quot;Years In current role&quot; and Years since Last Promotion? why?
+
+ggplot(data = employee_data, mapping = aes(x = YearsInCurrentRole, ..density..)) + 
+  geom_freqpoly(mapping = aes(color = Attrition),binwidth = 1)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-13-2.png" width="672" /></p>
+<pre class="r"><code># The lower the &quot;Years In Current Role&quot; variable the more likely there is attrition -- which makes sense because people left before spending a long time. What else is driving them to leave?
+
+ggplot(data = employee_data, mapping = aes(x = YearsInCurrentRole, y = YearsAtCompany)) +
+  geom_point(position = &quot;jitter&quot;)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-13-3.png" width="672" /></p>
+<pre class="r"><code>employee_data %&gt;% 
+  select(Attrition, YearsAtCompany, YearsInCurrentRole) %&gt;% 
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>employee_data %&gt;% 
+  select (Attrition,TrainingTimesLastYear, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole) %&gt;%
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code># Years At Company and Years In current Role has a high correlation of 0.776; however, that&#39;s normal, as you need to be in the company to change roles. And the longer you stay the more likely.</code></pre>
+<pre class="r"><code>employee_data %&gt;% 
+  select (Attrition, RelationshipSatisfaction, StandardHours, StockOptionLevel, TotalWorkingYears) %&gt;% 
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<pre class="r"><code># The average total working years is lower for the employees that left than the average working years of employees that stayed. However, the highest value of working years is in the attrition field. Therefore, this is not a candidate for selecting attrition.
+# RelationshipSatisfaction is not a factor for attrition. The average for relationship satisfaction is the same for those that stayed versus those that leave. However, 25% of the lower scores is in the Attrition column
+#Stock Option is not a factor
+#Standard Hours is not a factor</code></pre>
+<pre class="r"><code>employee_data %&gt;%
+ select(Attrition, PercentSalaryHike,PerformanceRating) %&gt;%
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<pre class="r"><code>#High correlation between Percent Salary Hike and Performance Rating. Interesting. Employees only provided a rating of 3 or 4. Why?
+
+employee_data %&gt;% select( Attrition, JobSatisfaction
+ ,Age
+ ,MonthlyIncome           
+ ,MonthlyRate
+ ,NumCompaniesWorked) %&gt;%
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-17-2.png" width="672" /></p>
+<pre class="r"><code># NumCompaniesWorked is not a factor for Attrition
+# Employees with lower monthly incomes are more like to leave to the company. The average MonthlyIncome was way lower than those who stayed with the company. MonthlyIncome is a factor for Attrition
+# MonthlyRate is not a factor for Attrition
+# Age is not a factor for Attrition. There were more people within the same age groups that stayed with the company.
+# Histogram of Age vs Attriton will prove this.
+# Not enough evidence to suggest that JobSatisfaction is a factor for attrition.</code></pre>
+<pre class="r"><code>employee_data %&gt;% select(
+  Attrition
+,HourlyRate
+,JobInvolvement          
+,JobLevel                
+,JobRole) %&gt;%
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>#Hourly rate is not a factor for Attrition. On average it is higher for those that left than those that stayed
+
+#The median job involvement for males were lower than females
+
+#JobInvolvement
+ggplotly(ggplot(data = employee_data, mapping = aes(x = Attrition, y = JobInvolvement, colour = Attrition))+
+           geom_boxplot())</code></pre>
+<div id="htmlwidget-a412a5660850e050fcb1" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a412a5660850e050fcb1">{"x":{"data":[{"x":[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],"y":[3,2,3,3,3,3,4,2,3,2,2,3,3,3,3,3,3,3,4,4,2,4,3,3,2,3,3,3,1,3,1,4,1,2,2,4,3,3,3,4,3,1,3,2,3,3,4,2,3,3,3,3,4,3,3,3,2,3,3,2,3,3,3,3,3,4,1,3,3,3,3,3,3,3,3,3,2,4,2,1,3,3,2,4,3,2,3,3,3,3,3,4,2,3,3,3,3,2,3,2,3,3,3,4,4,4,3,4,2,3,2,3,3,3,3,3,3,2,3,3,4,3,3,2,3,3,2,2,2,4,2,3,2,3,2,4,3,3,3,3,3,3,3,3,4,3,3,3,3,3,3,3,2,4,3,3,3,2,3,3,2,3,3,4,3,1,3,3,3,3,3,3,3,4,3,2,2,3,3,2,3,2,4,3,3,3,4,4,3,3,3,3,3,3,2,3,3,2,2,2,3,2,2,2,3,3,3,2,3,3,2,3,3,2,2,3,3,3,3,3,3,2,3,2,3,3,3,4,3,3,2,3,3,3,3,2,3,3,3,2,3,3,3,1,2,2,3,4,3,3,2,3,2,3,2,3,3,1,3,3,3,3,3,3,3,4,3,3,3,3,2,3,2,2,4,3,3,3,3,1,3,3,3,3,4,3,2,3,3,3,3,3,3,3,3,3,2,3,2,3,3,3,3,3,2,2,2,2,3,4,3,3,2,2,3,3,3,2,2,4,2,3,3,2,3,3,3,3,2,3,3,4,3,2,3,3,3,3,2,3,2,2,3,3,3,3,3,3,1,3,2,4,2,3,3,1,3,3,3,3,2,2,3,3,2,4,3,3,3,4,3,3,3,3,3,1,3,3,1,4,4,3,4,3,2,3,3,3,2,3,3,3,3,2,3,3,3,2,3,1,2,3,3,2,2,2,2,2,2,2,2,4,3,3,4,3,3,4,3,3,4,3,3,2,2,3,3,2,3,2,3,3,3,2,2,3,2,3,3,4,3,3,3,1,3,2,3,4,3,3,2,3,1,3,2,2,2,3,3,3,3,3,3,3,3,3,3,4,3,4,3,2,3,3,4,3,2,4,3,4,3,3,3,3,4,3,4,3,2,2,3,3,2,2,2,2,3,2,3,2,3,3,3,2,3,3,2,3,3,3,3,3,3,3,3,1,3,3,2,3,3,3,3,2,2,2,3,3,2,2,4,3,3,3,3,2,3,3,2,2,3,3,2,3,4,2,2,2,3,3,2,2,2,4,2,3,3,3,3,2,3,3,3,3,3,3,2,3,4,3,3,3,2,3,2,2,3,3,3,3,2,3,1,3,3,3,1,2,3,2,2,4,3,3,2,2,2,2,4,2,3,3,4,3,3,3,1,4,2,3,2,2,2,3,3,2,2,3,2,2,2,3,3,3,3,3,2,3,3,2,3,3,3,3,1,2,3,3,4,4,3,3,3,3,1,4,3,1,3,3,3,3,3,3,4,3,3,2,2,3,4,2,3,3,3,3,3,4,3,3,3,3,2,3,2,3,3,3,2,4,2,3,3,4,3,4,4,3,3,3,3,3,3,3,3,2,3,3,3,2,3,2,2,3,3,3,2,3,3,2,3,2,2,3,3,3,4,2,3,2,3,2,1,4,2,2,3,2,3,3],"hoverinfo":"y","type":"box","fillcolor":"rgba(255,255,255,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"},"size":5.66929133858268},"line":{"color":"rgba(248,118,109,1)","width":1.88976377952756},"name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","frame":null},{"x":[2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],"y":[2,2,3,4,2,3,2,3,2,3,2,3,2,3,2,2,1,3,1,3,3,1,3,2,3,3,3,1,3,1,2,3,3,1,3,2,2,3,3,3,2,3,1,2,3,3,1,2,3,3,3,3,2,1,2,2,2,2,2,3,3,2,3,3,3,3,3,3,2,3,3,2,2,3,4,3,1,3,1,2,3,1,3,3,3,3,3,1,2,3,3,2,3,3,3,1,3,2,1,2,3,3,2,2,3,3,1,1,2,3,3,3,2,3,1,4,1,3,2,1,1,2,3,2,4,2,3,2,4,3,4,1,4,2,2,3,2,2,3,3],"hoverinfo":"y","type":"box","fillcolor":"rgba(255,255,255,1)","marker":{"opacity":null,"outliercolor":"rgba(0,0,0,1)","line":{"width":1.88976377952756,"color":"rgba(0,0,0,1)"},"size":5.66929133858268},"line":{"color":"rgba(0,191,196,1)","width":1.88976377952756},"name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","frame":null}],"layout":{"margin":{"t":26.2283105022831,"r":7.30593607305936,"b":40.1826484018265,"l":31.4155251141553},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.4,2.6],"tickmode":"array","ticktext":["No","Yes"],"tickvals":[1,2],"categoryorder":"array","categoryarray":["No","Yes"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"Attrition","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.85,4.15],"tickmode":"array","ticktext":["1","2","3","4"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["1","2","3","4"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"JobInvolvement","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.96751968503937},"annotations":[{"text":"Attrition","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a9051ed3f60":{"x":{},"y":{},"colour":{},"type":"box"}},"cur_data":"3a9051ed3f60","visdat":{"3a9051ed3f60":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code>employee_data %&gt;% count(JobInvolvement)</code></pre>
+<pre><code>##    JobInvolvement   n
+## 1:              1  47
+## 2:              2 228
+## 3:              3 514
+## 4:              4  81</code></pre>
+<pre class="r"><code>BarChart(JobInvolvement, fill = (count) , data = employee_data)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-18-3.png" width="672" /></p>
+<pre><code>## &gt;&gt;&gt; Suggestions
+## BarChart(JobInvolvement, horiz=TRUE)  # horizontal bar chart
+## BarChart(JobInvolvement, fill=&quot;greens&quot;)  # sequential green bars
+## PieChart(JobInvolvement)  # doughnut (ring) chart
+## Plot(JobInvolvement)  # bubble plot
+## Plot(JobInvolvement, stat=&quot;count&quot;)  # lollipop plot 
+## 
+## 
+## --- JobInvolvement ---
+## 
+## 
+## Missing Values of JobInvolvement: 0 
+## 
+## 
+##                    1      2      3      4     Total 
+## Frequencies:      47    228    514     81       870 
+## Proportions:   0.054  0.262  0.591  0.093     1.000 
+## 
+## 
+## Chi-squared test of null hypothesis of equal probabilities 
+##   Chisq = 624.023, df = 3, p-value = 0.000</code></pre>
+<pre class="r"><code>ggplotly(employee_data %&gt;% ggplot(mapping = aes(x = JobInvolvement, fill = Attrition))+
+  geom_bar())</code></pre>
+<div id="htmlwidget-0409dfd12b1018aafc52" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0409dfd12b1018aafc52">{"x":{"data":[{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[22,44,67,7],"x":[1,2,3,4],"y":[25,184,447,74],"text":["count:  25<br />JobInvolvement: 1<br />Attrition: No","count: 184<br />JobInvolvement: 2<br />Attrition: No","count: 447<br />JobInvolvement: 3<br />Attrition: No","count:  74<br />JobInvolvement: 4<br />Attrition: No"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9],"base":[0,0,0,0],"x":[1,2,3,4],"y":[22,44,67,7],"text":["count:  22<br />JobInvolvement: 1<br />Attrition: Yes","count:  44<br />JobInvolvement: 2<br />Attrition: Yes","count:  67<br />JobInvolvement: 3<br />Attrition: Yes","count:   7<br />JobInvolvement: 4<br />Attrition: Yes"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.2283105022831,"r":7.30593607305936,"b":40.1826484018265,"l":43.1050228310502},"plot_bgcolor":"rgba(235,235,235,1)","paper_bgcolor":"rgba(255,255,255,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.355,4.645],"tickmode":"array","ticktext":["1","2","3","4"],"tickvals":[1,2,3,4],"categoryorder":"array","categoryarray":["1","2","3","4"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"y","title":{"text":"JobInvolvement","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-25.7,539.7],"tickmode":"array","ticktext":["0","100","200","300","400","500"],"tickvals":[-3.5527136788005e-15,100,200,300,400,500],"categoryorder":"array","categoryarray":["0","100","200","300","400","500"],"nticks":null,"ticks":"outside","tickcolor":"rgba(51,51,51,1)","ticklen":3.65296803652968,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.689497716895},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":0.66417600664176,"zeroline":false,"anchor":"x","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"rgba(255,255,255,1)","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.689497716895},"y":0.96751968503937},"annotations":[{"text":"Attrition","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a9022b542e2":{"x":{},"fill":{},"type":"bar"}},"cur_data":"3a9022b542e2","visdat":{"3a9022b542e2":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># Job involvement is not a factor for Attrition. </code></pre>
+<pre class="r"><code>ggplot(data = employee_data, mapping =aes(x = MonthlyIncome, y= Attrition, fill = Attrition))+
+  geom_boxplot()+
+  coord_flip()+
+  theme_economist()+
+  xlab(&quot;Attriton&quot;)+ ylab(&quot;Monthly Income&quot;)+
+  ggtitle(&quot;Attrition vs Monthly Income&quot;)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/Monthly%20Income%20Analysis-1.png" width="672" /></p>
+<pre class="r"><code>BarChart(JobLevel, fill = (count) , data = employee_data)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/Job%20Level%20Analysis-1.png" width="672" /></p>
+<pre><code>## &gt;&gt;&gt; Suggestions
+## BarChart(JobLevel, horiz=TRUE)  # horizontal bar chart
+## BarChart(JobLevel, fill=&quot;greens&quot;)  # sequential green bars
+## PieChart(JobLevel)  # doughnut (ring) chart
+## Plot(JobLevel)  # bubble plot
+## Plot(JobLevel, stat=&quot;count&quot;)  # lollipop plot 
+## 
+## 
+## --- JobLevel ---
+## 
+## 
+## Missing Values of JobLevel: 0 
+## 
+## 
+##                    1      2      3      4      5     Total 
+## Frequencies:     329    312    132     60     37       870 
+## Proportions:   0.378  0.359  0.152  0.069  0.043     1.000 
+## 
+## 
+## Chi-squared test of null hypothesis of equal probabilities 
+##   Chisq = 440.218, df = 4, p-value = 0.000</code></pre>
+<pre class="r"><code>ggplotly(employee_data %&gt;% ggplot(mapping = aes(x = JobLevel, fill = Attrition))+
+  geom_bar()+
+     ggtitle(&quot;Attrition vs Job Level&quot;)+
+    xlab(&quot;Job Levels&quot;)+
+    ylab(&quot;Number of Employees&quot;)+
+    theme_economist()
+  )</code></pre>
+<div id="htmlwidget-790ca4326f3efdce4e54" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-790ca4326f3efdce4e54">{"x":{"data":[{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[86,30,17,3,4],"x":[1,2,3,4,5],"y":[243,282,115,57,33],"text":["count: 243<br />JobLevel: 1<br />Attrition: No","count: 282<br />JobLevel: 2<br />Attrition: No","count: 115<br />JobLevel: 3<br />Attrition: No","count:  57<br />JobLevel: 4<br />Attrition: No","count:  33<br />JobLevel: 5<br />Attrition: No"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(248,118,109,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"No","legendgroup":"No","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null},{"orientation":"v","width":[0.9,0.9,0.9,0.9,0.9],"base":[0,0,0,0,0],"x":[1,2,3,4,5],"y":[86,30,17,3,4],"text":["count:  86<br />JobLevel: 1<br />Attrition: Yes","count:  30<br />JobLevel: 2<br />Attrition: Yes","count:  17<br />JobLevel: 3<br />Attrition: Yes","count:   3<br />JobLevel: 4<br />Attrition: Yes","count:   4<br />JobLevel: 5<br />Attrition: Yes"],"type":"bar","marker":{"autocolorscale":false,"color":"rgba(0,191,196,1)","line":{"width":1.88976377952756,"color":"transparent"}},"name":"Yes","legendgroup":"Yes","showlegend":true,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":53.8580323785803,"r":13.2835201328352,"b":38.5222083852221,"l":43.1714404317144},"plot_bgcolor":"transparent","paper_bgcolor":"rgba(213,228,235,1)","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"title":{"text":"<b> Attrition vs Job Level <\/b>","font":{"color":"rgba(0,0,0,1)","family":"","size":21.9178082191781},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.305,5.695],"tickmode":"array","ticktext":["1","2","3","4","5"],"tickvals":[1,2,3,4,5],"categoryorder":"array","categoryarray":["1","2","3","4","5"],"nticks":null,"ticks":"outside","tickcolor":"rgba(0,0,0,1)","ticklen":-6.6417600664176,"tickwidth":0.66417600664176,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":true,"linecolor":"rgba(0,0,0,1)","linewidth":0.531340805313408,"showgrid":false,"gridcolor":null,"gridwidth":0,"zeroline":false,"anchor":"y","title":{"text":"Job Levels","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-16.45,345.45],"tickmode":"array","ticktext":["0","100","200","300"],"tickvals":[0,100,200,300],"categoryorder":"array","categoryarray":["0","100","200","300"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":-6.6417600664176,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(255,255,255,1)","gridwidth":1.16230801162308,"zeroline":false,"anchor":"x","title":{"text":"Number of Employees","font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":true,"legend":{"bgcolor":"transparent","bordercolor":"transparent","borderwidth":1.88976377952756,"font":{"color":"rgba(0,0,0,1)","family":"","size":18.2648401826484},"y":0.96751968503937},"annotations":[{"text":"Attrition","x":1.02,"y":1,"showarrow":false,"ax":0,"ay":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":14.6118721461187},"xref":"paper","yref":"paper","textangle":-0,"xanchor":"left","yanchor":"bottom","legendTitle":true}],"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","showSendToCloud":false},"source":"A","attrs":{"3a903d047050":{"x":{},"fill":{},"type":"bar"}},"cur_data":"3a903d047050","visdat":{"3a903d047050":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<pre class="r"><code># JobLevel is a factor for Attrition. As Job level increases, Attrition decreases. More Attrition occurred with folks at the lowest job level.
+# 38% of the workforce is a Job Level 1. The Recommendation would be to assess your strong employees and Promote them as quickly as possible.</code></pre>
+<pre class="r"><code>employee_data %&gt;% select(
+  Attrition
+ ,Education         
+ ,EmployeeCount           
+ ,EmployeeNumber          
+ ,EnvironmentSatisfaction 
+) %&gt;%
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code># Education is not a factor for Attrition
+# EmployeeCount is not a factor for Attrition
+  ggplot(data = employee_data, mapping = aes( x = EmployeeCount))+
+  geom_boxplot()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
+<pre class="r"><code># EmployeeNumber is not a factor for Attrition
+  ggplot(data = employee_data, mapping = aes( x = EmployeeNumber))+
+  geom_boxplot()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-19-3.png" width="672" /></p>
+<pre class="r"><code># EmployeeSatisfaction is not a factor for Attrition</code></pre>
+<pre class="r"><code>employee_data %&gt;% select(
+ Attrition               
+ ,DailyRate               
+ ,DistanceFromHome
+ ,PercentSalaryHike
+ ,PerformanceRating
+) %&gt;%
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre class="r"><code> # DailyRate is not a factor for Attrition             
+ # DistanceFromHome is not a factor for Attrition
+ # PercentSalaryHike is not a factor for Attrition
+ # PerformanceRating is not a factor for Attrition</code></pre>
+<pre class="r"><code>ggplot(employee_data, mapping = aes(x=BusinessTravel)) +
+  geom_bar(mapping =aes(color = Attrition), position = &quot;dodge&quot;)</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<pre class="r"><code>#Non-Travel, Travel_Frequently, Travel_rarely
+
+ggplot(employee_data, mapping = aes(x=BusinessTravel, y = DistanceFromHome)) +
+  geom_boxplot(mapping =aes(color = Attrition))</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-21-2.png" width="672" /></p>
+<pre class="r"><code># people who work on average a further distance from home and don&#39;t travel have a high attrition!
+
+
+ggplot(employee_data, mapping = aes(x=BusinessTravel, y = Department)) +
+  geom_tile(mapping =aes())+
+  coord_flip()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-21-3.png" width="672" /></p>
+<pre class="r"><code>employee_data %&gt;% 
+  count(BusinessTravel, Department) %&gt;%
+  ggplot(mapping = aes(x = BusinessTravel, y = Department)) +
+  geom_tile(mapping = aes(fill = n))</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-21-4.png" width="672" /></p>
+<pre class="r"><code>employee_data %&gt;% select(Attrition
+  ,TrainingTimesLastYear
+  ,WorkLifeBalance
+  ,YearsAtCompany
+  ,YearsInCurrentRole
+  ,YearsSinceLastPromotion
+  ,YearsWithCurrManager) %&gt;%
+  ggpairs(mapping = aes(color = Attrition))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+</div>
+<div id="classification-model" class="section level1">
+<h1><strong>Classification Model</strong></h1>
+<div id="naive-bayes" class="section level2">
+<h2>Naive Bayes</h2>
+<pre class="r"><code># Find the average accuracy, sensitivity, and specificity of the model. The sensitivity and specificity must both be above 60%.
+
+master_acc &lt;-  numeric(100)
+master_sensitivity  &lt;-  numeric(100)
+master_specificivity &lt;-  numeric(100)
+master_seed &lt;-  numeric(100)
+
+
+for(seed in 1:100)
+{
+  set.seed(seed)
+  splitPerc = 0.50
+  
+  Index = sample(1:dim(employee_data)[1],round(splitPerc * dim(employee_data)[1]))
+  Train = employee_data[Index,]
+  Test = employee_data[-Index,]
+  
+  model_attrition_yesorno = naiveBayes(Train[,c(&quot;MonthlyIncome&quot;, &quot;JobLevel&quot;, &quot;OverTime&quot;)], factor(Train$Attrition, labels=c(&quot;No&quot;, &quot;Yes&quot;)))
+  CM = confusionMatrix(table(factor(Test$Attrition, labels = c(&quot;No&quot;, &quot;Yes&quot;)), predict(model_attrition_yesorno,Test[,c(&quot;MonthlyIncome&quot;, &quot;JobLevel&quot;, &quot;OverTime&quot;)])))
+  
+  master_acc[seed] &lt;-  CM$overall[1]
+  master_sensitivity[seed]  &lt;-  CM$byClass[1]
+  master_specificivity[seed]  &lt;-  CM$byClass[2]
+  master_seed[seed] &lt;-  seed
+}
+
+mean(master_seed)</code></pre>
+<pre><code>## [1] 50.5</code></pre>
+<pre class="r"><code>mean(master_acc)</code></pre>
+<pre><code>## [1] 0.8448046</code></pre>
+<pre class="r"><code>mean(master_sensitivity)</code></pre>
+<pre><code>## [1] 0.8686501</code></pre>
+<pre class="r"><code>na.omit(max(master_specificivity))</code></pre>
+<pre><code>## numeric(0)
+## attr(,&quot;na.action&quot;)
+## [1] 1
+## attr(,&quot;class&quot;)
+## [1] &quot;omit&quot;</code></pre>
+<pre class="r"><code> # model = naiveBayes(train[,c(1,2)],train$Species)
+ #  table(predict(model,test[,c(1,2)]),test$Species)
+ #  CM = confusionMatrix(table(predict(model,test[,c(1,2)]),test$Species))
+ #  masterAcc[j] = CM$overall[1]
+
+# The mean Accuracy is 0.8544061
+# The mean Sensitivity is 0.8688525
+# The mean Specificity is 0.6470588</code></pre>
+</div>
+</div>
+<div id="naive-bayes-model" class="section level1">
+<h1>Naive Bayes Model</h1>
+</div>
+<div id="final-model-used-for-the-naive-bayes-classification" class="section level1">
+<h1>Final Model used for the Naive Bayes classification</h1>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##      
+##        No Yes
+##   No  219   2
+##   Yes  33   7
+##                                           
+##                Accuracy : 0.8659          
+##                  95% CI : (0.8185, 0.9048)
+##     No Information Rate : 0.9655          
+##     P-Value [Acc &gt; NIR] : 1               
+##                                           
+##                   Kappa : 0.2431          
+##                                           
+##  Mcnemar&#39;s Test P-Value : 0.0000003959    
+##                                           
+##             Sensitivity : 0.8690          
+##             Specificity : 0.7778          
+##          Pos Pred Value : 0.9910          
+##          Neg Pred Value : 0.1750          
+##              Prevalence : 0.9655          
+##          Detection Rate : 0.8391          
+##    Detection Prevalence : 0.8467          
+##       Balanced Accuracy : 0.8234          
+##                                           
+##        &#39;Positive&#39; Class : No              
+## </code></pre>
+<div id="competition-dataset-with-no-attrition.-use-the-naive-bayes-model-to-predict-attrition." class="section level2">
+<h2>Competition dataset with No Attrition. Use the Naive Bayes Model to predict Attrition.</h2>
+</div>
+<div id="exploratory-data-analysis-for-regression-model" class="section level2">
+<h2>Exploratory Data Analysis for Regression Model</h2>
+<pre class="r"><code># Plot the following variables to see the correlation with MonthlyIncome
+
+employee_data %&gt;% select(MonthlyIncome, Age, Department, EducationField, JobLevel, JobRole, TotalWorkingYears, YearsAtCompany) %&gt;%
+ggpairs()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+</div>
+<div id="regression-model-to-predict-monthly-income" class="section level2">
+<h2>Regression Model to predict Monthly Income</h2>
+<pre class="r"><code># Goal: create a regression model that has an RMSE less than $3000
+
+# Dependent Variable: MonthlyIncome
+# Predictors/Experiment variable(s): Age and Total Working Years
+
+
+numMSPEs = 1000
+
+MSPEHolderModel4 = numeric(numMSPEs)
+MSPEHolderModel5 = numeric(numMSPEs)
+MSPEHolderModel10 = numeric(numMSPEs)
+
+for (i in 1:numMSPEs)
+{
+  
+  index &lt;- createDataPartition(employee_data$ID, p = .60, list = FALSE)
+  monthly_income_train &lt;- employee_data[index, ]
+  monthly_income_test &lt;- employee_data[-index, ]
+  
+  
+  #Model 4
+  monthly_income_model_fit4 = lm(MonthlyIncome ~ JobLevel+TotalWorkingYears, data = monthly_income_train)
+  monthly_income_Pred_4 = predict(monthly_income_model_fit4, newdata = monthly_income_test)
+  MSPE4 = mean((employee_data$MonthlyIncome - monthly_income_Pred_4)^2)
+  MSPE4
+  MSPEHolderModel4[i] = MSPE4
+  
+  #Model 5
+  monthly_income_model_fit5 = lm(MonthlyIncome ~ JobRole, data = monthly_income_train)
+  monthly_income_Pred_5 = predict(monthly_income_model_fit5, newdata = monthly_income_test)
+  MSPE5 = mean((employee_data$MonthlyIncome - monthly_income_Pred_5)^2)
+  MSPE5
+  MSPEHolderModel5[i] = MSPE5
+  
+}
+
+mean(MSPEHolderModel4)</code></pre>
+<pre><code>## [1] 40395966</code></pre>
+<pre class="r"><code>summary(monthly_income_model_fit4)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = MonthlyIncome ~ JobLevel + TotalWorkingYears, data = monthly_income_train)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5477.0  -915.5    99.0   793.2  3801.3 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value             Pr(&gt;|t|)
+## (Intercept)       -1888.50     128.49 -14.697 &lt; 0.0000000000000002
+## JobLevel           3695.28      87.44  42.261 &lt; 0.0000000000000002
+## TotalWorkingYears    62.07      12.49   4.971          0.000000904
+## 
+## Residual standard error: 1377 on 521 degrees of freedom
+## Multiple R-squared:  0.9113, Adjusted R-squared:  0.911 
+## F-statistic:  2676 on 2 and 521 DF,  p-value: &lt; 0.00000000000000022</code></pre>
+<pre class="r"><code>confint(monthly_income_model_fit4)</code></pre>
+<pre><code>##                         2.5 %      97.5 %
+## (Intercept)       -2140.92434 -1636.07318
+## JobLevel           3523.50292  3867.05992
+## TotalWorkingYears    37.54021    86.59602</code></pre>
+<pre class="r"><code>mean(MSPEHolderModel5)</code></pre>
+<pre><code>## [1] 38188225</code></pre>
+<pre class="r"><code>summary(monthly_income_model_fit5)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = MonthlyIncome ~ JobRole, data = monthly_income_train)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5431.2 -1205.5  -433.7  1202.5  6667.0 
+## 
+## Coefficients:
+##                               Estimate Std. Error t value             Pr(&gt;|t|)
+## (Intercept)                     7474.5      307.5  24.310 &lt; 0.0000000000000002
+## JobRoleHuman Resources         -3700.6      643.8  -5.748         0.0000000155
+## JobRoleLaboratory Technician   -4176.5      376.6 -11.091 &lt; 0.0000000000000002
+## JobRoleManager                  9872.8      473.8  20.836 &lt; 0.0000000000000002
+## JobRoleManufacturing Director    169.3      417.8   0.405               0.6855
+## JobRoleResearch Director        8300.7      487.8  17.016 &lt; 0.0000000000000002
+## JobRoleResearch Scientist      -4224.1      365.3 -11.565 &lt; 0.0000000000000002
+## JobRoleSales Executive          -800.5      357.1  -2.241               0.0254
+## JobRoleSales Representative    -4861.9      469.7 -10.352 &lt; 0.0000000000000002
+## 
+## Residual standard error: 2040 on 515 degrees of freedom
+## Multiple R-squared:  0.8077, Adjusted R-squared:  0.8047 
+## F-statistic: 270.3 on 8 and 515 DF,  p-value: &lt; 0.00000000000000022</code></pre>
+<pre class="r"><code>confint(monthly_income_model_fit5)</code></pre>
+<pre><code>##                                    2.5 %     97.5 %
+## (Intercept)                    6870.4269  8078.5277
+## JobRoleHuman Resources        -4965.4808 -2435.7814
+## JobRoleLaboratory Technician  -4916.2735 -3436.6583
+## JobRoleManager                 8941.8686 10803.6769
+## JobRoleManufacturing Director  -651.4509   990.0348
+## JobRoleResearch Director       7342.2854  9259.0359
+## JobRoleResearch Scientist     -4941.6731 -3506.5151
+## JobRoleSales Executive        -1502.1379   -98.8643
+## JobRoleSales Representative   -5784.5734 -3939.1690</code></pre>
+<pre class="r"><code>testMSE4 = mean((monthly_income_test$MonthlyIncome - monthly_income_Pred_4) ^ 2)
+testMSE4</code></pre>
+<pre><code>## [1] 1995349</code></pre>
+<pre class="r"><code>RMSE4 &lt;- sqrt(testMSE4)
+RMSE4</code></pre>
+<pre><code>## [1] 1412.568</code></pre>
+<pre class="r"><code>testMSE5 = mean((monthly_income_test$MonthlyIncome - monthly_income_Pred_5) ^ 2)
+testMSE5</code></pre>
+<pre><code>## [1] 3928057</code></pre>
+<pre class="r"><code>RMSE5 &lt;- sqrt(testMSE5)
+RMSE5</code></pre>
+<pre><code>## [1] 1981.933</code></pre>
+</div>
+<div id="competition-dataset-with-no-monthlyincome.-use-the-linear-regression-model-to-predict-monthly-income." class="section level2">
+<h2>Competition dataset with No MonthlyIncome. Use the Linear Regression Model to predict Monthly Income.</h2>
+<pre class="r"><code>#Load in the competition dataset
+
+monthly_income_comp_dataset = read.csv(&quot;C:/Users/Rayon/OneDrive/Documents/Doing DataScience/Doing Data Science/MSDS_6306_Doing-Data-Science/Unit 14 and 15 Case Study 2/CaseStudy2CompSet No Salary.csv&quot;)
+
+#Use the Linear Regression Model to predict the MonthlyIncome for each observation.
+# Model name = &quot;model_attrition_yesorno&quot;
+
+monthly_income_comp_dataset$PredMonthlyIncome = predict(monthly_income_model_fit4, monthly_income_comp_dataset)
+
+
+write.csv(monthly_income_comp_dataset[,c(1,36)], &quot;Case2PredictionsMorris Salary.csv&quot;)</code></pre>
+<pre class="r"><code>employee_data %&gt;% ggplot(mapping = aes(x = MonthlyIncome, y = Department))+
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot; , se = FALSE)+
+  ggtitle(&quot;Total Years vs. MonthlyIncome&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<pre class="r"><code>#cor.test(employee_data$MonthlyIncome, as.factor(employee_data$Department))
+
+
+employee_data %&gt;% ggplot(mapping = aes(x = MonthlyIncome, y = Age))+
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot; , se = FALSE)+
+  ggtitle(&quot;Total Years vs. MonthlyIncome&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-29-2.png" width="672" /></p>
+<pre class="r"><code>employee_data %&gt;% ggplot(mapping = aes(x = MonthlyIncome, y = EducationField))+
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot; , se = FALSE)+
+  ggtitle(&quot;Total Years vs. MonthlyIncome&quot;)+
+  coord_flip()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-29-3.png" width="672" /></p>
+<pre class="r"><code>employee_data %&gt;% ggplot(mapping = aes(x = MonthlyIncome, y = JobLevel))+
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot; , se = FALSE)+
+  ggtitle(&quot;Total Years vs. MonthlyIncome&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-29-4.png" width="672" /></p>
+<pre class="r"><code>cor.test(employee_data$MonthlyIncome, employee_data$JobLevel)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  employee_data$MonthlyIncome and employee_data$JobLevel
+## t = 91.262, df = 868, p-value &lt; 0.00000000000000022
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.9449434 0.9575400
+## sample estimates:
+##     cor 
+## 0.95164</code></pre>
+<pre class="r"><code>employee_data %&gt;% ggplot(mapping = aes(x = MonthlyIncome, y = JobRole))+
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot; , se = FALSE)+
+  ggtitle(&quot;Total Years vs. MonthlyIncome&quot;)+
+  coord_flip()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-29-5.png" width="672" /></p>
+<pre class="r"><code>str(employee_data)</code></pre>
+<pre><code>## Classes &#39;data.table&#39; and &#39;data.frame&#39;:   870 obs. of  36 variables:
+##  $ ID                      : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Age                     : int  32 40 35 32 24 27 41 37 34 34 ...
+##  $ Attrition               : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ BusinessTravel          : chr  &quot;Travel_Rarely&quot; &quot;Travel_Rarely&quot; &quot;Travel_Frequently&quot; &quot;Travel_Rarely&quot; ...
+##  $ DailyRate               : int  117 1308 200 801 567 294 1283 309 1333 653 ...
+##  $ Department              : chr  &quot;Sales&quot; &quot;Research &amp; Development&quot; &quot;Research &amp; Development&quot; &quot;Sales&quot; ...
+##  $ DistanceFromHome        : int  13 14 18 1 2 10 5 10 10 10 ...
+##  $ Education               : int  4 3 2 4 1 2 5 4 4 4 ...
+##  $ EducationField          : chr  &quot;Life Sciences&quot; &quot;Medical&quot; &quot;Life Sciences&quot; &quot;Marketing&quot; ...
+##  $ EmployeeCount           : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ EmployeeNumber          : int  859 1128 1412 2016 1646 733 1448 1105 1055 1597 ...
+##  $ EnvironmentSatisfaction : int  2 3 3 3 1 4 2 4 3 4 ...
+##  $ Gender                  : chr  &quot;Male&quot; &quot;Male&quot; &quot;Male&quot; &quot;Female&quot; ...
+##  $ HourlyRate              : int  73 44 60 48 32 32 90 88 87 92 ...
+##  $ JobInvolvement          : int  3 2 3 3 3 3 4 2 3 2 ...
+##  $ JobLevel                : int  2 5 3 3 1 3 1 2 1 2 ...
+##  $ JobRole                 : chr  &quot;Sales Executive&quot; &quot;Research Director&quot; &quot;Manufacturing Director&quot; &quot;Sales Executive&quot; ...
+##  $ JobSatisfaction         : int  4 3 4 4 4 1 3 4 3 3 ...
+##  $ MaritalStatus           : chr  &quot;Divorced&quot; &quot;Single&quot; &quot;Single&quot; &quot;Married&quot; ...
+##  $ MonthlyIncome           : int  4403 19626 9362 10422 3760 8793 2127 6694 2220 5063 ...
+##  $ MonthlyRate             : int  9250 17544 19944 24032 17218 4809 5561 24223 18410 15332 ...
+##  $ NumCompaniesWorked      : int  2 1 2 1 1 1 2 2 1 1 ...
+##  $ Over18                  : chr  &quot;Y&quot; &quot;Y&quot; &quot;Y&quot; &quot;Y&quot; ...
+##  $ OverTime                : chr  &quot;No&quot; &quot;No&quot; &quot;No&quot; &quot;No&quot; ...
+##  $ PercentSalaryHike       : int  11 14 11 19 13 21 12 14 19 14 ...
+##  $ PerformanceRating       : int  3 3 3 3 3 4 3 3 3 3 ...
+##  $ RelationshipSatisfaction: int  3 1 3 3 3 3 1 3 4 2 ...
+##  $ StandardHours           : int  80 80 80 80 80 80 80 80 80 80 ...
+##  $ StockOptionLevel        : int  1 0 0 2 0 2 0 3 1 1 ...
+##  $ TotalWorkingYears       : int  8 21 10 14 6 9 7 8 1 8 ...
+##  $ TrainingTimesLastYear   : int  3 2 2 3 2 4 5 5 2 3 ...
+##  $ WorkLifeBalance         : int  2 4 3 3 3 2 2 3 3 2 ...
+##  $ YearsAtCompany          : int  5 20 2 14 6 9 4 1 1 8 ...
+##  $ YearsInCurrentRole      : int  2 7 2 10 3 7 2 0 1 2 ...
+##  $ YearsSinceLastPromotion : int  0 4 2 5 1 1 0 0 0 7 ...
+##  $ YearsWithCurrManager    : int  3 9 2 7 3 7 3 0 0 7 ...
+##  - attr(*, &quot;.internal.selfref&quot;)=&lt;externalptr&gt;</code></pre>
+<pre class="r"><code>cor.test(employee_data$MonthlyIncome, employee_data$YearsAtCompany)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  employee_data$MonthlyIncome and employee_data$YearsAtCompany
+## t = 16.622, df = 868, p-value &lt; 0.00000000000000022
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.4392594 0.5402018
+## sample estimates:
+##      cor 
+## 0.491379</code></pre>
+<pre class="r"><code>employee_data %&gt;% ggplot(mapping = aes(x = TotalWorkingYears, y = YearsAtCompany, position = &quot;jitters&quot;), position = &quot;jitters&quot;)+
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot; , se = FALSE)+
+  ggtitle(&quot;Total Years vs. MonthlyIncome&quot;)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-29-6.png" width="672" /></p>
+<pre class="r"><code>cor.test(employee_data$MonthlyIncome, employee_data$TotalWorkingYears)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  employee_data$MonthlyIncome and employee_data$TotalWorkingYears
+## t = 36.544, df = 868, p-value &lt; 0.00000000000000022
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.7509003 0.8034053
+## sample estimates:
+##       cor 
+## 0.7785112</code></pre>
+<pre class="r"><code>employee_data %&gt;% ggplot(mapping = aes(x = TotalWorkingYears, y = MonthlyIncome))+
+  geom_point()+
+  geom_smooth(method = &quot;lm&quot; , se = FALSE)+
+  ggtitle(&quot;Total Years vs. MonthlyIncome&quot;)+
+  coord_flip()</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-29-7.png" width="672" /></p>
+<p>#EDA CHUNK</p>
+<pre class="r"><code>ggplot(data = employee_data, mapping = aes(x = MonthlyIncome, colour = JobRole)) +
+  geom_freqpoly()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<pre class="r"><code># Observation, the people with salary less than $5,000 is greatest among the Research and Development Department, why?
+# Are they younger?, Do they have lower job levels, do they work less hours? Did more people leave the company out of the Research &amp; Development department? What department had the highest Attrition?
+
+
+# Research Scientist are the highest among those making less than $5,000. They start out a little higher than other roles. but only less than 5 are making over $10,000 
+ggplot(data = employee_data, mapping = aes(x = MonthlyIncome, colour = JobRole)) +
+  geom_freqpoly()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-2.png" width="672" /></p>
+<pre class="r"><code>employee_data %&gt;% group_by(JobRole) %&gt;% count(MonthlyIncome)</code></pre>
+<pre><code>## # A tibble: 850 x 3
+## # Groups:   JobRole [9]
+##    JobRole                   MonthlyIncome     n
+##    &lt;chr&gt;                             &lt;int&gt; &lt;int&gt;
+##  1 Healthcare Representative          4014     1
+##  2 Healthcare Representative          4035     1
+##  3 Healthcare Representative          4069     1
+##  4 Healthcare Representative          4244     1
+##  5 Healthcare Representative          4448     1
+##  6 Healthcare Representative          4523     1
+##  7 Healthcare Representative          4553     1
+##  8 Healthcare Representative          4617     1
+##  9 Healthcare Representative          4741     1
+## 10 Healthcare Representative          4777     1
+## # ... with 840 more rows</code></pre>
+<pre class="r"><code># Monthly Income
+ggplot(data = employee_data, mapping = aes(x= JobRole, y = MonthlyIncome, color = Attrition))+
+  geom_boxplot()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-3.png" width="672" /></p>
+<pre class="r"><code>#How does overtime affect this? 
+ggplot(data = employee_data, mapping = aes(x= JobRole, y = MonthlyIncome, color = OverTime))+
+  geom_boxplot()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-4.png" width="672" /></p>
+<pre class="r"><code>#How many people get overtime by jobrole? Only 65 research scientist gets overtime.
+employee_data %&gt;% group_by(JobRole) %&gt;% count(OverTime)</code></pre>
+<pre><code>## # A tibble: 18 x 3
+## # Groups:   JobRole [9]
+##    JobRole                   OverTime     n
+##    &lt;chr&gt;                     &lt;chr&gt;    &lt;int&gt;
+##  1 Healthcare Representative No          54
+##  2 Healthcare Representative Yes         22
+##  3 Human Resources           No          21
+##  4 Human Resources           Yes          6
+##  5 Laboratory Technician     No         120
+##  6 Laboratory Technician     Yes         33
+##  7 Manager                   No          41
+##  8 Manager                   Yes         10
+##  9 Manufacturing Director    No          64
+## 10 Manufacturing Director    Yes         23
+## 11 Research Director         No          35
+## 12 Research Director         Yes         16
+## 13 Research Scientist        No         107
+## 14 Research Scientist        Yes         65
+## 15 Sales Executive           No         141
+## 16 Sales Executive           Yes         59
+## 17 Sales Representative      No          35
+## 18 Sales Representative      Yes         18</code></pre>
+<pre class="r"><code># What does this look like for the daily rate?
+ggplot(data = employee_data, mapping = aes(x= JobRole, y = DailyRate, color = Attrition))+
+  geom_boxplot()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-5.png" width="672" /></p>
+<pre class="r"><code># What does this look like for the Monthly rate?
+ggplot(data = employee_data, mapping = aes(x= JobRole, y = MonthlyRate, color = Attrition))+
+  geom_boxplot()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-6.png" width="672" /></p>
+<pre class="r"><code># Attrition is high among those who make less that 5,000. The graph below shows this.
+ggplot(data = employee_data, mapping = aes(x = MonthlyIncome, colour = Attrition)) +
+  geom_freqpoly()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-7.png" width="672" /></p>
+<pre class="r"><code># The average monthlyIncome was significantly lower in one Education Field than the others? Why?
+# The average monthlyIncome was significantly lower in one Department than the others? Why?
+
+
+ggplot(data = )</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-8.png" width="672" /></p>
+<pre class="r"><code>ggplot(data = employee_data, mapping = aes(x= EducationField, y = MonthlyRate, color = Attrition))+
+  geom_boxplot()</code></pre>
+<p><img src="Frito-Lay-Attrition-Analysis_files/figure-html/unnamed-chunk-30-9.png" width="672" /></p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

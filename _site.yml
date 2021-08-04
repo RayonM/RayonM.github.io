@@ -1,10 +1,12 @@
 name: "my-website"
-navbar: 
+navbar:  
   title: "Rayon's Portfolio"
-  left:
+  left:  
     - text: "Home"
       href: index.html
     - text: "About"
       href: About.html
-      text: "Case Study 1"
+    - text: "Case Study 1"
       href: MSDS_Case_Study.html
+    - text: "Case Study 2"
+      href: Frito-Lay_Attrition-Analysis.html
