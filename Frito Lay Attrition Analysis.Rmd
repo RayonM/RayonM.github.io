@@ -1,0 +1,1090 @@
+---
+title: "Frito Lay Analysis"
+author: "Rayon M"
+date: "7/30/2021"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+[Frito Lay Presentation](https://web.microsoftstream.com/video/56add957-b794-4992-9d3c-cfe0aedcae4a)
+
+
+## **Project Objectives**
+
+  1.  Classify Attrition
+  2.  Identify Trends within the Departments and Job Roles
+  3.  Predict Monthly Income
+
+## **Methodology**
+
+  This Analysis was conducted using the following methodology:
+  
+  1.  Loaded the data set provided (CaseStudy2-data.csv)
+  2.  Performed Exploratory Data Analysis to identify key factors that leads to Attrition, and find explanatory variables for the Linear Regression Model.
+  3.  Used the Naive Bayes to achieve Classification
+  4.  Used Linear Regression to Predict the Monthly Income
+
+  Categorical Data:
+  
+  *  Attrition
+  *  BusinessTravel
+  *  Department
+  *  EducationField
+  *  Gender
+  *  JobRole
+  *  MaritalStatus
+  *  Over18
+  *  OverTime
+  
+  
+  Continuous Variables:
+  
+  *  Age
+  *  DailyRate
+  *  DistanceFromHome
+  *  Education
+  *  EmployeeCount
+  *  EmployeeNumber
+  *  EnvironmentSatisfaction
+  *  HourlyRate
+  *  JobInvolvement
+  *  JobLevel
+  *  JobSatisfaction
+  *  MonthlyIncome
+  *  MonthlyRate
+  *  NumCompaniesWorked
+  *  PercentSalaryHike
+  *  PerformanceRating
+  *  RelationshipSatisfaction
+  *  StandardHours
+  *  StockOptionLevel
+  *  TotalWorkingYears
+  *  TrainingTimesLastYear
+  *  WorkLifeBalance
+  *  YearsAtCompany
+  *  YearsInCurrentRole
+  *  YearsSinceLastPromotion
+  *  YearsWithCurrManager
+
+
+```{r Libraries, message=FALSE,warning=FALSE}
+
+# Import the relevant packages and libraries used to perform the analysis.
+
+library(tidyverse)
+library(GGally)
+library(naniar)
+library(dplyr)
+library(class)
+library(caret)
+library(e1071)
+library(ggplot2)
+library(plotly)
+library(data.table)
+library(ggthemes)
+library(lessR)
+library(scales)
+library(wesanderson)
+# library(kableExtra)
+library(colorspace)
+
+```
+
+### *Import Data*
+```{r echo = FALSE}
+# Read in the employee dataset that will be used in the Analysis.
+
+employee_data = read.csv("C:/Users/Rayon/OneDrive/Documents/Doing DataScience/Doing Data Science/MSDS_6306_Doing-Data-Science/Unit 14 and 15 Case Study 2/CaseStudy2-data.csv")
+
+```
+
+## **Exploratory Data Analysis (EDA)**
+###  Explore factors that can lead voluntary employee turnover (Attrition). Identify the top three factors that contribute to turnover.
+###  The business is also interested in learning about any job role specific trends that may exist in the data set. You can also provide any other interesting trends and observations from your analysis. 
+
+```{r}
+# Look at the structure of the data
+str(employee_data) # 870 observations and 36 variables
+
+# display top 6 observations in the data
+head(employee_data)
+
+
+# view the variables in the dataset to determine if there are any "NAs" or missing values.
+gg_miss_var(employee_data)
+
+# The dataset did not have any missing  or NA values. 
+
+```
+
+## *What trends exist within the data? What is the split between Attrition Yes and No?*
+
+```{r Attrition}
+
+attrition_split <- data.frame(employee_data %>% group_by(Attrition) %>% summarise(Count = n()))
+attrition_split
+
+# The  "Attrition" variable contains 730 No and 140 Yes observations in the dataset.
+
+# Calculate the percentage difference of the No vs. Yes observations.
+# Use setDT from the data.table package to calculate the %.
+
+attrition_percent <- setDT (employee_data)[, 100 * .N/ nrow(employee_data), by = Attrition]
+
+attrition_percent$V1 = round(attrition_percent$V1)
+
+ggplot(data = attrition_percent, mapping = aes(x = Attrition, y = V1, fill = Attrition))+
+  geom_bar(stat = "identity") +
+  geom_text(aes(Attrition, V1-10, label = V1), data = attrition_percent)+
+  xlab("Attriton")+
+  ylab("Percentages")+
+  ggtitle("Attrition Distribution by percent")+
+  theme_tufte()+
+  theme(legend.position = "none")
+
+
+# Another option for displaying percentages
+BarChart(Attrition, fill = (count) , data = employee_data)
+
+# Summary:
+# The data consists of 84% No's and 16% Yes's as it pertains to Attrition.
+
+```
+
+##  *Find where Attrition is highest among the Categorical Variables*
+
+```{r OverTime Analysis, echo=FALSE, message=FALSE}
+
+# Attrition vs. Overtime
+
+overtime_percent <- setDT (employee_data)[, 100 * .N/ nrow(employee_data), by = OverTime]
+
+overtime_percent$V1  <-  round(overtime_percent$V1)
+colnames(overtime_percent)[2] = "Percent"
+overtime_percent <-  data.frame(overtime_percent)
+overtime_percent$OverTime <- as.factor(overtime_percent$OverTime)
+
+overtime_percent
+
+# 29% of all employees work Overtime
+# 71% of all employees does not work Overtime
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = OverTime, colour = Attrition))+
+  theme_economist()+
+   theme(legend.position = "none")+
+  ggtitle("Attrition vs. OverTime"))
+
+# 57% of persons who left the company were working overtime! This will be one of the factors that leads to Attrition
+# Attrition was highest in the group of employees that worked overtime
+
+# ggplot(data = employee_data, mapping = aes(y = OverTime))+
+#   geom_bar()+
+#   geom_text(aes(OverTime, label = Percent, Percent = Percent + 1000000), data = overtime_percent)+
+#   coord_flip()+
+#   scale_y_discrete(expand = c(0, 0))+
+#   scale_x_discrete(expand = c(0, 0))
+
+BarChart(OverTime, by = Attrition , data = employee_data)
+
+overtime_attrition <- BarChart(OverTime, by = Attrition , data = employee_data)
+
+# Heat map showing that a large number of the employees don't work overtime.
+
+pal <- wes_palette("Zissou1", 100, type = "continuous")
+ggplotly(employee_data %>% 
+  count(Attrition, OverTime)%>%
+  ggplot(mapping = aes(x = Attrition,  y = OverTime)) +
+  geom_tile(mapping = aes(fill = n))+
+  scale_fill_gradientn(colours = pal) + 
+  scale_x_discrete(expand = c(0, 0)) +
+  scale_y_discrete(expand = c(0, 0)) + 
+  coord_equal()+
+  theme_economist()+
+  ggtitle("Attrition vs. OverTime"))
+
+# Mosaic Map to show differences
+subs_pal <- colorspace::qualitative_hcl(3, h = 80,c = 80, l = 60)
+mosaicplot(Attrition~OverTime, data = employee_data,col =subs_pal, main ="Attrition vs Overtime", xlab = "Attrition", ylab = "Overtime", size =2, border = "black", las = 0.10, dir = c("h", "v"), off = 3, cex.axis = 1)
+
+
+
+ggplotly(ggplot(data = employee_data, mapping = aes(x = OverTime,  fill = Attrition))+
+  geom_bar(position = "dodge"))
+
+
+
+ggplotly(employee_data %>% filter(Attrition == "Yes") %>%
+ggplot(mapping = aes(x = Attrition, fill = OverTime))+
+  geom_bar()+
+  ggtitle("Attrition(Yes) by Overtime"))
+
+# 
+
+ggplot(employee_data, aes(x= Attrition,  group=OverTime)) + 
+    geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+    geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) +
+    labs(y = "Percent", fill="OverTime") +
+    facet_grid(~OverTime) +
+    scale_y_continuous(labels = scales::percent)+
+  theme_economist()
+  
+
+# 32% of employees working overtime voluntarily left the company.
+# 68% of employees of overtime employees remained with the company
+
+
+ggplot(employee_data, aes(x= OverTime,  group= Attrition)) + 
+    geom_bar(aes(y = ..prop.., fill = factor(..x..)), stat="count") +
+    geom_text(aes( label = scales::percent(..prop..),
+                   y= ..prop.. ), stat= "count", vjust = -.5) +
+    labs(y = "Percent", fill="Attrition") +
+    facet_grid(~Attrition) +
+    scale_y_continuous(labels = scales::percent)+
+  theme_economist()+
+  ggtitle("Overtime seperated by Attrition")+
+  xlab("Overtime")+
+  ylab("Percent")
+
+# 57% of Attrition were from Overtime Employees.
+
+
+```
+
+
+```{r warning=FALSE}
+# Attrition vs BusinessTravel
+attrition_businesstravel <- ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = BusinessTravel, colour = Attrition))+
+  theme_economist()+
+  ggtitle("Attrition vs. Business Travel")
+  ggplotly(attrition_businesstravel)
+
+employee_data %>% count(Attrition, BusinessTravel)
+
+# 15% of employees that traveled Rarely left the company
+# 12% of employees that were Non-Travel left the company
+# 22% of employees that were Travel_Frequently left the company
+
+attrition_businesstravel2 <-  employee_data %>% 
+  count(Attrition, BusinessTravel)%>%
+  ggplot(mapping = aes(x = Attrition,  y = BusinessTravel)) +
+  geom_tile(mapping = aes(fill = n))
+  ggplotly(attrition_businesstravel2)
+  
+# The Highest Attrition percentage was from those who Traveled rarely - 22%. Hence, I don't think business Travel is a factor for Attrition.
+  #Business Travel has a lower Median for Attrition than non Attrition
+#one department is seeing a high turnover 
+```  
+  
+  
+```{r}
+# Attrition vs Department
+
+attrition_department <- ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = Department, colour = Attrition))+
+  theme_economist()+
+  ggtitle("Attrition vs. Department")
+  
+  ggplotly(attrition_department)
+
+employee_data %>% count(Attrition, Department)
+
+# 17% of those that left were from the Human Resources Department
+# 13% of those that left were from the Research & Development Department
+# 21% of that that left were from the Sales Department
+
+attrition_department2 <-  employee_data %>% 
+  count(Attrition, Department)%>%
+  ggplot(mapping = aes(x = Attrition,  y = Department)) +
+  geom_tile(mapping = aes(fill = n))+
+  theme_economist()+
+  ggtitle("Attrition vs. Department")
+
+  ggplotly(attrition_department2)
+  
+# Do sales people work more overtime?
+  
+  ggplotly(ggplot(data = employee_data)+
+    geom_bar(mapping = aes(x = Department, fill = OverTime, alpha = JobRole), position = "dodge") +
+    ggtitle("Overtime by Department")+
+    xlab("Department")+
+    ylab("Number of Employees")+
+    theme_economist()+
+      theme(legend.position = "none")
+  )
+
+# No. There is a higher percentage of people working overtime in the Research and Development Department - 29%
+  #65% of Overtime comes from the Research & Development Department
+  #32% of Overtime comes from the Sales Department
+
+PieChart(Department, data = employee_data, hole = 0)
+
+# The Research and Development Department makes up 65% of the company. Department is not one of the Factors that leads to Attrition.
+
+# What is the percentage of non-exempt people leaving the company versus full time?
+
+```
+
+
+```{r}
+# Attrition v. EducationField
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = EducationField, colour = Attrition))+
+  theme_economist()+
+  ggtitle("Attrition vs. EducationField"))
+
+employee_data %>% count(Attrition, EducationField)  
+
+
+```
+
+
+```{r}
+# Attrition v. Gender
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = Gender, colour = Attrition))+
+  theme_economist()+
+  ggtitle("Attrition vs. Gender"))
+
+employee_data %>% count(Attrition, Gender)
+
+# There are more males working in the company than females.
+# The attrition rate among the two Genders were approximately the same at 15%
+# No indicative of Attrition
+
+```
+
+
+```{r JobRole Analysis}
+# Attrition v. JobRole
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = JobRole, color = OverTime))+
+  theme_economist()+
+  ggtitle("Attrition vs. JobRole"))
+
+# JobRole is not a factor for Attrition.
+
+BarChart(JobRole, by=Department, data = employee_data)
+
+employee_data %>% ggplot(mapping = aes(x = JobRole, fill = Attrition))+
+  geom_bar()
+
+Attrition_table <- data.frame(employee_data %>% count(Attrition, JobRole))
+Attrition_table
+
+ggplot(data = Attrition_table, mapping = aes(x = JobRole, y = n))+
+  geom_boxplot()
+
+ggplot(data = employee_data, aes(x = JobRole, y= Attrition, color = Attrition))+
+  geom_count()+
+  coord_flip()
+
+# Count of employees within JobLevel
+ggplot(data = Attrition_table, mapping = aes(x = JobRole, y = n, fill = Attrition))+
+  geom_bar(stat = "identity")+
+   geom_text(aes(JobRole, n, label = n), position = position_stack (vjust = .5), col = "red4")
+
+# Displays the % of turnover within each JobLevel
+ggplotly(employee_data %>% group_by(Attrition, JobRole)%>%
+  tally %>% 
+  mutate(percent =round(n/sum(n)*100))%>%
+  ggplot(aes(x = JobRole, y = percent, fill = Attrition))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(JobRole, percent, label = paste0(sprintf("%.0f", percent),"%")), position = position_stack (vjust = .5), col = "black")+
+  xlab("Job Role") + ylab("Percent")+
+  ggtitle("Job Role by Attrition"))
+
+# The Sales Executive JobRole had the highest Turnover
+
+BarChart(JobRole, by=OverTime, data = employee_data)
+
+
+ggplotly(employee_data %>% group_by(OverTime, JobRole)%>%
+  tally %>% 
+  mutate(percent =round(n/sum(n)*100))%>%
+  ggplot(aes(x = JobRole, y = percent, fill = OverTime))+
+  geom_bar(stat = "identity")+
+  geom_text(aes(JobRole, percent, label = paste0(sprintf("%.0f", percent),"%")), position = position_stack (vjust = .5), col = "black")+
+  xlab("Job Role") + ylab("Percent")+
+  ggtitle("Job Role by OverTime"))
+
+# Research Scientist Job Role had the most OverTime at 26%
+
+ggplotly(employee_data %>% group_by(OverTime, JobRole)%>%
+  ggplot(aes(x= JobRole,  fill = OverTime))+
+    geom_bar())
+
+employee_data %>% count(OverTime, JobRole)
+  
+```
+
+
+
+```{r MaritalStatus Analysis, echo=FALSE}
+# Attrition v. MaritalStatus
+
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = MaritalStatus, color = Attrition))+
+  theme_economist()+
+  ggtitle("Attrition vs. MaritalStatus"))
+
+employee_data %>% count(Attrition, MaritalStatus)
+
+# Higher Attrition count among Single people
+# 50% of Attrition was attributed to Single Persons
+
+# Single
+70+199
+70/269*100 # 26%
+70/140*100 #50%
+
+# Married
+58+352
+58/410*100 # 14%
+58/140*100 # 41%
+
+# Divorced
+12+179
+12/179*100 # 6%, 
+12/140*100 # 8 %
+
+
+ggplotly(ggplot(data = employee_data, mapping =  aes(x = OverTime, y = MaritalStatus, fill = Attrition))+
+  geom_count()+
+  coord_flip())
+
+s_pal <- colorspace::qualitative_hcl(3, h = 70, c = 40, l = 50)
+  mosaicplot(Attrition~MaritalStatus, data = employee_data,col = s_pal, main ="Attrition vs Marital Status", xlab = "Attrition", ylab = "Marital Status", size =2, border = "black", las = 0.10,  off = 3, cex.axis = 1)
+
+# Graph showing that Single employees were the highest group to voluntarily leave the company.
+  
+```
+
+
+```{r}
+# Attrition v. Over18
+ggplotly(ggplot(data = employee_data) + 
+  geom_count(mapping = aes(x = Attrition, y = Over18, colour = Attrition))+
+  theme_economist()+
+  ggtitle("Attrition vs. Over18"))
+
+
+# No significance to the Study. All observations are over18.
+```
+  
+  
+# Find where Attrition is highest among the Continuous variables
+
+
+```{r}
+
+employee_data %>% 
+  select (Attrition, YearsInCurrentRole, YearsSinceLastPromotion, YearsWithCurrManager) %>%
+  ggpairs(mapping = aes(color = Attrition))
+
+# Attrition looks to have the lowest median in the "Years in current role" variable and No Attrition have the highest, why?
+# Attrition looks to have the lowest median in the "Years with Current Manager" and No Attrition have the highest, why?
+# Attrition has a high correlation with "Years In current role" and Years with current manager? why? Overall the Correlation is 0.709 (Strong)
+# Attrition has a medium correlation with "Years In current role" and Years since Last Promotion? why?
+
+ggplot(data = employee_data, mapping = aes(x = YearsInCurrentRole, ..density..)) + 
+  geom_freqpoly(mapping = aes(color = Attrition),binwidth = 1)
+
+# The lower the "Years In Current Role" variable the more likely there is attrition -- which makes sense because people left before spending a long time. What else is driving them to leave?
+
+ggplot(data = employee_data, mapping = aes(x = YearsInCurrentRole, y = YearsAtCompany)) +
+  geom_point(position = "jitter")
+
+```
+
+
+```{r}
+employee_data %>% 
+  select(Attrition, YearsAtCompany, YearsInCurrentRole) %>% 
+  ggpairs(mapping = aes(color = Attrition))
+
+```
+
+```{r}
+employee_data %>% 
+  select (Attrition,TrainingTimesLastYear, WorkLifeBalance, YearsAtCompany, YearsInCurrentRole) %>%
+  ggpairs(mapping = aes(color = Attrition))
+
+# Years At Company and Years In current Role has a high correlation of 0.776; however, that's normal, as you need to be in the company to change roles. And the longer you stay the more likely.
+
+
+```
+
+
+```{r}
+employee_data %>% 
+  select (Attrition, RelationshipSatisfaction, StandardHours, StockOptionLevel, TotalWorkingYears) %>% 
+  ggpairs(mapping = aes(color = Attrition))
+
+# The average total working years is lower for the employees that left than the average working years of employees that stayed. However, the highest value of working years is in the attrition field. Therefore, this is not a candidate for selecting attrition.
+# RelationshipSatisfaction is not a factor for attrition. The average for relationship satisfaction is the same for those that stayed versus those that leave. However, 25% of the lower scores is in the Attrition column
+#Stock Option is not a factor
+#Standard Hours is not a factor
+
+
+```
+
+
+```{r}
+employee_data %>%
+ select(Attrition, PercentSalaryHike,PerformanceRating) %>%
+  ggpairs(mapping = aes(color = Attrition))
+
+#High correlation between Percent Salary Hike and Performance Rating. Interesting. Employees only provided a rating of 3 or 4. Why?
+
+employee_data %>% select( Attrition, JobSatisfaction
+ ,Age
+ ,MonthlyIncome           
+ ,MonthlyRate
+ ,NumCompaniesWorked) %>%
+  ggpairs(mapping = aes(color = Attrition))
+
+# NumCompaniesWorked is not a factor for Attrition
+# Employees with lower monthly incomes are more like to leave to the company. The average MonthlyIncome was way lower than those who stayed with the company. MonthlyIncome is a factor for Attrition
+# MonthlyRate is not a factor for Attrition
+# Age is not a factor for Attrition. There were more people within the same age groups that stayed with the company.
+# Histogram of Age vs Attriton will prove this.
+# Not enough evidence to suggest that JobSatisfaction is a factor for attrition.
+
+```
+
+
+
+
+```{r}
+
+employee_data %>% select(
+  Attrition
+,HourlyRate
+,JobInvolvement          
+,JobLevel                
+,JobRole) %>%
+  ggpairs(mapping = aes(color = Attrition))
+
+#Hourly rate is not a factor for Attrition. On average it is higher for those that left than those that stayed
+
+#The median job involvement for males were lower than females
+
+#JobInvolvement
+ggplotly(ggplot(data = employee_data, mapping = aes(x = Attrition, y = JobInvolvement, colour = Attrition))+
+           geom_boxplot())
+
+employee_data %>% count(JobInvolvement)
+BarChart(JobInvolvement, fill = (count) , data = employee_data)
+ggplotly(employee_data %>% ggplot(mapping = aes(x = JobInvolvement, fill = Attrition))+
+  geom_bar())
+
+# Job involvement is not a factor for Attrition. 
+```
+
+
+```{r Monthly Income Analysis}
+
+ggplot(data = employee_data, mapping =aes(x = MonthlyIncome, y= Attrition, fill = Attrition))+
+  geom_boxplot()+
+  coord_flip()+
+  theme_economist()+
+  xlab("Attriton")+ ylab("Monthly Income")+
+  ggtitle("Attrition vs Monthly Income")
+
+# The median MonthlyIncome of Attrition was lower than current employees.
+# The median MonthlyIncome was was lower than the $5000
+# Monthly Income is a factor for Attrition
+
+
+```
+
+
+```{r Job Level Analysis, echo=FALSE}
+
+ggplotly(employee_data %>% ggplot(mapping = aes(x = JobLevel, fill = Attrition))+
+  geom_bar()+
+     ggtitle("Attrition vs Job Level")+
+    xlab("Job Levels")+
+    ylab("Number of Employees")+
+    theme_economist()
+)
+
+# JobLevel is a factor for Attrition. As Joblevel increases, Attrition decreases. Attrition occurred most at the lowest Joblevel.
+
+joblevel_percent <- setDT (employee_data)[, 100 * .N/ nrow(employee_data), by = JobLevel]
+joblevel_percent$V1  <-  round(joblevel_percent$V1)
+colnames(joblevel_percent)[2] = "Percent"
+joblevel_percent
+
+BarChart(JobLevel, fill = (count) , data = employee_data)
+
+# 38% of the workforce is a Job Level 1. The Recommendation would be to assess your strong employees and Promote them as quickly as possible.
+
+
+```
+
+
+```{r}
+
+employee_data %>% select(
+  Attrition
+ ,Education         
+ ,EmployeeCount           
+ ,EmployeeNumber          
+ ,EnvironmentSatisfaction 
+) %>%
+  ggpairs(mapping = aes(color = Attrition))
+
+# Education is not a factor for Attrition
+# EmployeeCount is not a factor for Attrition
+  ggplot(data = employee_data, mapping = aes( x = EmployeeCount))+
+  geom_boxplot()
+
+# EmployeeNumber is not a factor for Attrition
+  ggplot(data = employee_data, mapping = aes( x = EmployeeNumber))+
+  geom_boxplot()
+
+# EmployeeSatisfaction is not a factor for Attrition
+
+```
+
+```{r}
+
+employee_data %>% select(
+ Attrition               
+ ,DailyRate               
+ ,DistanceFromHome
+ ,PercentSalaryHike
+ ,PerformanceRating
+) %>%
+  ggpairs(mapping = aes(color = Attrition))
+
+ # DailyRate is not a factor for Attrition             
+ # DistanceFromHome is not a factor for Attrition
+ # PercentSalaryHike is not a factor for Attrition
+ # PerformanceRating is not a factor for Attrition
+
+```
+
+```{r}
+ggplot(employee_data, mapping = aes(x=BusinessTravel)) +
+  geom_bar(mapping =aes(fill = Attrition), position = "dodge") +
+  ggtitle("Attrition vs Business Travel")+
+  xlab("Business Travel") +ylab("Employee Count")+
+  theme_economist()
+
+#Non-Travel, Travel_Frequently, Travel_rarely
+
+ggplot(employee_data, mapping = aes(x=BusinessTravel, y = DistanceFromHome)) +
+  geom_boxplot(mapping =aes(color = Attrition))
+# people who work on average a further distance from home and don't travel have a high attrition!
+
+
+ggplot(employee_data, mapping = aes(x=BusinessTravel, y = Department)) +
+  geom_tile(mapping =aes())+
+  coord_flip()
+
+employee_data %>% 
+  count(BusinessTravel, Department) %>%
+  ggplot(mapping = aes(x = BusinessTravel, y = Department)) +
+  geom_tile(mapping = aes(fill = n))
+
+```
+
+```{r}
+
+employee_data %>% select(Attrition
+  ,TrainingTimesLastYear
+  ,WorkLifeBalance
+  ,YearsAtCompany
+  ,YearsInCurrentRole
+  ,YearsSinceLastPromotion
+  ,YearsWithCurrManager) %>%
+  ggpairs(mapping = aes(color = Attrition))
+
+
+```
+
+# **Classification Model**
+## Naive Bayes
+
+```{r}
+
+# Find the average accuracy, sensitivity, and specificity of the model. The sensitivity and specificity must both be above 60%.
+# Loop to find the best seed to use for the Model.
+
+master_acc <-  numeric(100)
+master_sensitivity  <-  numeric(100)
+master_specificivity <-  numeric(100)
+master_seed <-  numeric(100)
+
+
+for(seed in 1:100)
+{
+  set.seed(seed)
+  splitPerc = 0.50
+  
+  Index = sample(1:dim(employee_data)[1],round(splitPerc * dim(employee_data)[1]))
+  Train = employee_data[Index,]
+  Test = employee_data[-Index,]
+  
+  model_attrition_yesorno = naiveBayes(Train[,c("MonthlyIncome", "JobLevel", "OverTime")], factor(Train$Attrition, labels=c("No", "Yes")))
+  CM = confusionMatrix(table(factor(Test$Attrition, labels = c("No", "Yes")), predict(model_attrition_yesorno,Test[,c("MonthlyIncome", "JobLevel", "OverTime")])))
+  
+  master_acc[seed] <-  CM$overall[1]
+  master_sensitivity[seed]  <-  CM$byClass[1]
+  master_specificivity[seed]  <-  CM$byClass[2]
+  master_seed[seed] <-  seed
+}
+
+mean(master_seed)
+mean(master_acc)
+mean(master_sensitivity)
+mean(master_specificivity) 
+
+# Mean Specificity was turning out to be NA. That's because as the for loop cycled through there were moments when the model did not find Specificity. 
+
+```
+
+
+# Naive Bayes Model
+# Final Model used for the Naive Bayes classification
+
+```{r echo=FALSE}
+
+set.seed(5)
+
+splitPerc = 0.70
+TrainIndices = sample(1:dim(employee_data)[1],round(splitPerc * dim(employee_data)[1]))
+Train = employee_data[TrainIndices,]
+Test = employee_data[-TrainIndices,]
+
+model_attrition_yesorno = naiveBayes(Train[,c("MonthlyIncome", "JobLevel", "OverTime")],factor(Train$Attrition, labels=c("No", "Yes")))
+CM = confusionMatrix(table(factor(Test$Attrition, labels = c("No", "Yes")), predict(model_attrition_yesorno,Test[,c("MonthlyIncome", "JobLevel", "OverTime")])))
+
+CM
+
+```
+
+
+## Competition dataset with No Attrition. Use the Naive Bayes Model to predict Attrition.
+
+```{r echo = FALSE}
+
+#Import the competition dataset
+comp_dataset <- read.csv("C:/Users/Rayon/OneDrive/Documents/Doing DataScience/Doing Data Science/MSDS_6306_Doing-Data-Science/Unit 14 and 15 Case Study 2/CaseStudy2CompSet No Attrition.csv")
+
+# Use the NaiveBayes Classification Model to classify each observation as Yes or No to Attrition.
+# Model name: model_attrition_yesorno
+# Create a new variable, comp_dataset$PredAttrition to store the predicted values.
+
+comp_dataset$PredAttrition <- predict(model_attrition_yesorno,comp_dataset[,c("MonthlyIncome", "JobLevel", "OverTime")])
+
+# You must provide the labels (ordered by ID) in a csv file.
+
+write.csv(comp_dataset[,c(1,36)], "Case2PredictionsMorris Attrition.csv")
+
+```
+
+
+## Exploratory Data Analysis for Regression Model
+
+```{r Monthly Income Analysis 1, message=FALSE, warning=FALSE}
+# Plot the following variables to see the correlation with MonthlyIncome
+
+employee_data %>% select(MonthlyIncome, Age, Department, EducationField, JobLevel, JobRole, TotalWorkingYears, YearsAtCompany) %>%
+ggpairs()
+
+```
+
+
+```{r}
+
+# Plot Monthly Income vs Department
+
+employee_data %>% ggplot(mapping = aes(x = MonthlyIncome, y = Department)) +
+  geom_point() +
+  geom_smooth(method = "lm" , se = FALSE) +
+  ggtitle("Monthly Income vs. Department")
+
+# cor.test(employee_data$MonthlyIncome, employee_data$Department)
+
+```
+
+
+```{r Monthly Income vs Age}
+# Plot Monthly Income vs Age
+
+employee_data %>% ggplot(mapping = aes(x = MonthlyIncome, y = Age)) +
+  geom_point() +
+  geom_smooth(method = "lm" , se = FALSE) +
+  ggtitle("Monthly vs. Age")
+
+cor.test(employee_data$MonthlyIncome, employee_data$Age) # Correlation is 0.4842883
+
+# Correlation is low with Monthly Income
+
+
+```
+
+
+```{r}
+
+# Plot Monthly Income vs EducationField
+
+employee_data %>% ggplot(mapping = aes(x = MonthlyIncome, y = EducationField))+
+  geom_point()+
+  geom_smooth(method = "lm" , se = FALSE)+
+  ggtitle("Total Years vs. MonthlyIncome")+
+  coord_flip()
+
+
+```
+
+
+```{r Monthly Income vs Job Role, warning=FALSE, message=FALSE}
+
+# Plot Monthly Income vs JobRole
+
+employee_data %>% ggplot(mapping = aes(x = MonthlyIncome, y = JobRole))+
+  geom_point()+
+  geom_smooth(method = "lm" , se = FALSE)+
+  ggtitle("Job Role vs. MonthlyIncome")+
+  coord_flip()
+
+```
+
+
+
+```{r Monthly Income vs Years at Company, warning=FALSE, message=FALSE}
+
+employee_data %>% ggplot(mapping = aes(x = MonthlyIncome, y = YearsAtCompany,position = "jitters"))+
+  geom_point()+
+  geom_smooth(method = "lm" , se = FALSE)+
+  ggtitle("Years at Company vs. MonthlyIncome")+
+  theme_economist() +
+  coord_flip()
+
+cor.test(employee_data$MonthlyIncome, employee_data$YearsAtCompany)
+# Correlation between Monthly Income and Years at Company is 0.49
+
+```
+
+
+```{r Monthly Income vs Total Working Years, warning=FALSE, message=FALSE}
+
+# Plot Monthly Income vs Total Working Years
+employee_data %>% ggplot(mapping = aes(x = MonthlyIncome, y = TotalWorkingYears))+
+  geom_point(aes(position = "jitters"))+
+  geom_smooth(method = "lm" , se = FALSE)+
+  ggtitle("Total Working Years vs. MonthlyIncome")+
+  theme_economist()
+
+ggplot(data = employee_data, mapping =aes(x = TotalWorkingYears)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black") +
+  ggtitle("Histogram of Total Working Years") +
+  xlab("Total Working Years") + ylab("Employee Count")
+
+# Right Skewed Histogram with mode at 10 Years
+
+
+# Correlation Test between MonthlyIncome and Total Working Years 
+cor.test(employee_data$MonthlyIncome, employee_data$TotalWorkingYears) # 0.77 
+
+```
+
+
+```{r Job Level vs Monthly Income, warning=FALSE, message=FALSE}
+
+# Plot Job Level vs Monthly Income
+employee_data %>% ggplot(mapping = aes(x = JobLevel, y = MonthlyIncome))+
+  geom_point()+
+  geom_smooth(method = "lm" , se = FALSE)+
+  xlab("Total Working Years")+ ylab("Monthly Income")+
+  ggtitle("Total Years vs. Job Level")
+
+  
+# Correlation Test between MonthlyIncome and Job Level 
+cor.test(employee_data$MonthlyIncome, employee_data$JobLevel) # Correlation is 0.95
+
+employee_data %>% ggplot(mapping = aes(x = JobLevel, y = MonthlyIncome))+
+  geom_point()+
+  geom_smooth(method = "lm" , se = FALSE)+
+  xlab("Total Working Years")+ ylab("Monthly Income")+
+  ggtitle("Total Years vs. MonthlyIncome")
+
+
+ggplot(data = employee_data, mapping = aes(x=JobLevel)) +
+  geom_histogram()
+
+# Right skewed histogram. Fewer employees as the JobLevel increases.
+# Correlation is too high to use in the Model
+
+```
+
+
+# Experimentation
+```{r}
+
+
+ggplot(data = employee_data, mapping = aes(x = MonthlyIncome, colour = JobRole)) +
+  geom_freqpoly()
+
+# Observation, the people with salary less than $5,000 is greatest among the Research and Development Department, why?
+# Are they younger?, Do they have lower job levels, do they work less hours? Did more people leave the company out of the Research & Development department? What department had the highest Attrition?
+
+
+# Research Scientist are the highest among those making less than $5,000. They start out a little higher than other roles. but only less than 5 are making over $10,000 
+ggplot(data = employee_data, mapping = aes(x = MonthlyIncome, colour = JobRole)) +
+  geom_freqpoly() +
+  theme_economist() +
+  xlab("Monthly Income") + ylab("Employee Count") +
+  ggtitle("Distribution of Monthly Income")
+ 
+
+# Monthly Income
+ggplot(data = employee_data, mapping = aes(x= JobRole, y = MonthlyIncome, color = Attrition))+
+  geom_boxplot() +
+  ggtitle("Job Role vs Monthly Income") +
+  xlab("Job Role")+
+  ylab("Monthly Income")+
+  theme_economist()
+
+#How does overtime affect this? 
+ggplot(data = employee_data, mapping = aes(x= JobRole, y = MonthlyIncome, color = OverTime))+
+  geom_boxplot()
+
+
+#How many people get overtime by jobrole? Only 65 research scientist gets overtime.
+employee_data %>% group_by(JobRole) %>% summarise(count = n()) %>%
+  ggplot(mapping = aes(x = JobRole, y = count, fill = JobRole)) +
+  geom_bar(stat = "identity", color = "black", width = 0.5) +
+  geom_text(aes(x = JobRole, label = count, vjust = -.5))+
+  theme_economist_white()+
+  xlab("Job Role") + ylab("Employee Count")+
+  ggtitle("Distribution of Job Role")+
+  theme(legend.position = "none")
+
+
+# What does this look like for the daily rate?
+ggplot(data = employee_data, mapping = aes(x= JobRole, y = DailyRate, color = Attrition))+
+  geom_boxplot()
+
+# What does this look like for the Monthly rate?
+ggplot(data = employee_data, mapping = aes(x= JobRole, y = MonthlyRate, color = Attrition))+
+  geom_boxplot()
+
+
+# Attrition is high among those who make less that 5,000. The graph below shows this.
+ggplot(data = employee_data, mapping = aes(x = MonthlyIncome, colour = Attrition)) +
+  geom_freqpoly()
+
+# The average monthlyIncome was significantly lower in one Education Field than the others? Why?
+# The average monthlyIncome was significantly lower in one Department than the others? Why?
+
+
+ggplot(data = )
+ggplot(data = employee_data, mapping = aes(x= EducationField, y = MonthlyRate, color = Attrition))+
+  geom_boxplot()
+
+```
+
+
+## *Regression Model to predict Monthly Income* 
+```{r, warning=FALSE, message=FALSE}
+
+# Goal: create a regression model that has an RMSE less than 3000.
+# Dependent Variable: MonthlyIncome
+# Predictors/Experiment variable(s): Age and JobLevel
+
+set.seed(126)
+
+numMSPEs = 1000
+
+MSPEHolderModel4 = numeric(numMSPEs)
+MSPEHolderModel5 = numeric(numMSPEs)
+MSPEHolderModel10 = numeric(numMSPEs)
+
+for (i in 1:numMSPEs)
+{
+  
+  index <- createDataPartition(employee_data$ID, p = .70, list = FALSE)
+  monthly_income_train <- employee_data[index, ]
+  monthly_income_test <- employee_data[-index, ]
+  
+  
+  #Model 4
+  monthly_income_model_fit4 = lm(MonthlyIncome ~ Age+JobLevel, data = monthly_income_train)
+  monthly_income_Pred_4 = predict(monthly_income_model_fit4, newdata = monthly_income_test)
+  MSPE4 = mean((employee_data$MonthlyIncome - monthly_income_Pred_4)^2)
+  MSPE4
+  MSPEHolderModel4[i] = MSPE4
+  
+  #Model 5
+  monthly_income_model_fit5 = lm(MonthlyIncome ~ JobRole, data = monthly_income_train)
+  monthly_income_Pred_5 = predict(monthly_income_model_fit5, newdata = monthly_income_test)
+  MSPE5 = mean((employee_data$MonthlyIncome - monthly_income_Pred_5)^2)
+  MSPE5
+  MSPEHolderModel5[i] = MSPE5
+  
+}
+
+# Model 4 Statistics
+mean(MSPEHolderModel4)
+summary(monthly_income_model_fit4)
+confint(monthly_income_model_fit4)
+
+# Model 4 RMSE 
+testMSE4 = mean((monthly_income_test$MonthlyIncome - monthly_income_Pred_4) ^ 2)
+testMSE4
+RMSE4 <- sqrt(testMSE4)
+RMSE4
+
+# Model 5 Statistics
+mean(MSPEHolderModel5)
+summary(monthly_income_model_fit5)
+confint(monthly_income_model_fit5)
+
+# Model 5 RMSE
+testMSE5 = mean((monthly_income_test$MonthlyIncome - monthly_income_Pred_5) ^ 2)
+testMSE5
+RMSE5 <- sqrt(testMSE5)
+RMSE5
+
+# Model 4 had the lowest RMSE of 1348.37
+# Model 5 RMSE was 2065.96
+
+```
+
+## *Competition dataset with No MonthlyIncome. Use the best Linear Regression Model to predict Monthly Income.*
+
+```{r}
+
+#Load in the competition dataset
+
+monthly_income_comp_dataset = read.csv("C:/Users/Rayon/OneDrive/Documents/Doing DataScience/Doing Data Science/MSDS_6306_Doing-Data-Science/Unit 14 and 15 Case Study 2/CaseStudy2CompSet No Salary.csv")
+
+#Use the Linear Regression Model to predict the MonthlyIncome for each observation.
+# Model name = "model_attrition_yesorno"
+
+monthly_income_comp_dataset$PredMonthlyIncome = predict(monthly_income_model_fit4, monthly_income_comp_dataset)
+
+# Write the predicted variables to a file named:"Case2PredictionsMorris Salary.csv"
+
+write.csv(monthly_income_comp_dataset[,c(1,36)], "Case2PredictionsMorris Salary.csv")
+
+```
+
+
